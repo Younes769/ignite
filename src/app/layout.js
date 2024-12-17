@@ -25,11 +25,12 @@ export const metadata = {
     title: 'DevIM Hackathon | NCS Club',
     description: 'Join us for 72 hours of innovation, creativity, and impact at NIT Rahmania.',
   },
-  viewport: {
-    width: 'device-width',
-    initialScale: 1,
-    maximumScale: 1,
-  },
+};
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
   themeColor: '#10b981',
 };
 

@@ -23,30 +23,29 @@ const ParticlesBackground = () => {
       canvas.style.height = `${window.innerHeight}px`;
     };
 
-    // Initialize particles with optimized count
+    // Initialize particles
     const initParticles = () => {
       particles.current = [];
       const numberOfParticles = Math.min(
-        50,
-        Math.floor((canvas.width * canvas.height) / 25000)
+        100,
+        Math.floor((canvas.width * canvas.height) / 20000)
       );
       
       for (let i = 0; i < numberOfParticles; i++) {
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 2 + 1,
-          speedX: Math.random() * 0.5 - 0.25,
-          speedY: Math.random() * 0.5 - 0.25,
-          opacity: Math.random() * 0.5 + 0.2,
+          size: 2, // Small, consistent size
+          speedX: (Math.random() - 0.5) * 0.5,
+          speedY: (Math.random() - 0.5) * 0.5,
+          connections: [], // Track connected particles
         });
       }
     };
 
-    // Optimized animation
     const animate = (timestamp) => {
       const deltaTime = timestamp - lastTime;
-      if (deltaTime < 1000 / 30) { // Cap at 30 FPS
+      if (deltaTime < 1000 / 30) {
         animationFrameId = requestAnimationFrame(animate);
         return;
       }
@@ -54,62 +53,87 @@ const ParticlesBackground = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      particles.current.forEach((particle, index) => {
-        // Update position with delta time
-        particle.x += particle.speedX * (deltaTime / 16);
-        particle.y += particle.speedY * (deltaTime / 16);
+      // Update and draw particles
+      particles.current.forEach((particle) => {
+        // Update position
+        particle.x += particle.speedX;
+        particle.y += particle.speedY;
 
-        // Wrap around screen
-        if (particle.x < 0) particle.x = canvas.width;
-        if (particle.x > canvas.width) particle.x = 0;
-        if (particle.y < 0) particle.y = canvas.height;
-        if (particle.y > canvas.height) particle.y = 0;
+        // Bounce off edges
+        if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
+        if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
 
-        // Calculate distance to mouse
-        const dx = mouse.current.x - particle.x;
-        const dy = mouse.current.y - particle.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
+        // Keep particle within bounds
+        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
+        particle.y = Math.max(0, Math.min(canvas.height, particle.y));
 
-        // Interactive effect with mouse
-        if (distance < 150) {
-          const angle = Math.atan2(dy, dx);
-          const force = (150 - distance) / 150;
-          particle.x -= Math.cos(angle) * force * 2;
-          particle.y -= Math.sin(angle) * force * 2;
-          particle.opacity = Math.min(0.8, particle.opacity + force * 0.2);
-        } else {
-          particle.opacity = Math.max(0.2, particle.opacity - 0.01);
-        }
+        // Reset connections
+        particle.connections = [];
+      });
 
-        // Draw particle with gradient
-        const gradient = ctx.createRadialGradient(
-          particle.x, particle.y, 0,
-          particle.x, particle.y, particle.size
-        );
-        gradient.addColorStop(0, `rgba(16, 185, 129, ${particle.opacity})`);
-        gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
-        
-        ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = gradient;
-        ctx.fill();
-
-        // Draw connections (only to nearby particles)
-        for (let j = index + 1; j < particles.current.length; j++) {
-          const otherParticle = particles.current[j];
+      // Find connections and create shapes
+      particles.current.forEach((particle, i) => {
+        particles.current.slice(i + 1).forEach(otherParticle => {
           const dx = particle.x - otherParticle.x;
           const dy = particle.y - otherParticle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 120) {
-            ctx.beginPath();
-            ctx.moveTo(particle.x, particle.y);
-            ctx.lineTo(otherParticle.x, otherParticle.y);
-            const opacity = 0.15 * (1 - distance / 120);
-            ctx.strokeStyle = `rgba(16, 185, 129, ${opacity})`;
-            ctx.stroke();
+          if (distance < 150) { // Connection distance threshold
+            particle.connections.push(otherParticle);
+            otherParticle.connections.push(particle);
           }
+        });
+      });
+
+      // Draw connections first (lines behind dots)
+      ctx.beginPath();
+      particles.current.forEach(particle => {
+        particle.connections.forEach(connected => {
+          const distance = Math.hypot(particle.x - connected.x, particle.y - connected.y);
+          const opacity = 1 - (distance / 150);
+          
+          ctx.strokeStyle = `rgba(16, 185, 129, ${opacity * 0.5})`;
+          ctx.lineWidth = 1;
+          
+          ctx.moveTo(particle.x, particle.y);
+          ctx.lineTo(connected.x, connected.y);
+        });
+      });
+      ctx.stroke();
+
+      // Draw particles
+      particles.current.forEach(particle => {
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+        ctx.fill();
+
+        // Optional: Add a subtle glow to connection points
+        if (particle.connections.length > 0) {
+          ctx.beginPath();
+          ctx.arc(particle.x, particle.y, particle.size + 1, 0, Math.PI * 2);
+          ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';
+          ctx.fill();
         }
+      });
+
+      // Find and draw triangles
+      particles.current.forEach((p1, i) => {
+        p1.connections.forEach((p2, j) => {
+          p2.connections.forEach(p3 => {
+            if (p3.connections.includes(p1)) {
+              // We found a triangle
+              const opacity = 0.03;
+              ctx.beginPath();
+              ctx.moveTo(p1.x, p1.y);
+              ctx.lineTo(p2.x, p2.y);
+              ctx.lineTo(p3.x, p3.y);
+              ctx.closePath();
+              ctx.fillStyle = `rgba(16, 185, 129, ${opacity})`;
+              ctx.fill();
+            }
+          });
+        });
       });
 
       animationFrameId = requestAnimationFrame(animate);
@@ -117,7 +141,7 @@ const ParticlesBackground = () => {
 
     // Throttled event handlers
     let isThrottled = false;
-    const throttleTime = 16; // ~60fps
+    const throttleTime = 16;
 
     const handleMouseMove = (e) => {
       if (!isThrottled) {

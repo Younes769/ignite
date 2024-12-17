@@ -15,7 +15,8 @@ const Footer = () => {
                 alt="DevIM Logo"
                 width={32}
                 height={32}
-                className="relative"
+                sizes="32px"
+                className="relative w-full h-auto"
               />
             </div>
             <span className="font-bold text-xl bg-gradient-to-r from-emerald-400 to-emerald-200 inline-block text-transparent bg-clip-text">

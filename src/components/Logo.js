@@ -137,10 +137,12 @@ const Logo = () => {
                   <Image
                     src="/logo.png"
                     alt="DevIM Logo"
-                    fill
+                    width={300}
+                    height={300}
                     priority
+                    sizes="(max-width: 640px) 200px, 300px"
                     className={`
-                      object-contain transition-all duration-[2000ms]
+                      w-full h-auto object-contain transition-all duration-[2000ms]
                       ${isHovered ? "scale-105" : "scale-100"}
                     `}
                   />
