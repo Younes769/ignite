@@ -21,19 +21,24 @@ export default function Home() {
       {/* Interactive background */}
       <ParticlesBackground />
       
-      {/* Countdown timer */}
-      <Countdown />
+      {/* Countdown timer - hide on very small screens */}
+      <div className="hidden sm:block">
+        <Countdown />
+      </div>
 
       {/* Main content */}
-      <div className="relative">
-        <Logo />
-        <Hero onRegisterClick={() => setIsModalOpen(true)} />
-        <Stats />
-        <About />
-        <Schedule />
-        <Sponsors />
-        <FAQ />
-        <Footer />
+      <div className="relative min-h-screen">
+        {/* Add responsive padding */}
+        <div className="px-4 sm:px-6 lg:px-8">
+          <Logo />
+          <Hero onRegisterClick={() => setIsModalOpen(true)} />
+          <Stats />
+          <About />
+          <Schedule />
+          <Sponsors />
+          <FAQ />
+          <Footer />
+        </div>
       </div>
 
       {/* Registration modal */}

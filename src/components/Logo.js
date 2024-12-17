@@ -35,13 +35,13 @@ const Logo = () => {
   return (
     <div
       ref={containerRef}
-      className="absolute top-12 left-1/2 -translate-x-1/2 w-full max-w-[300px] aspect-square"
+      className="absolute top-6 sm:top-12 left-1/2 -translate-x-1/2 w-full max-w-[200px] sm:max-w-[300px] aspect-square"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div className="relative w-full h-full group perspective-1000">
-        {/* Energy field effect */}
-        <div className="absolute inset-0 rounded-full opacity-50">
+        {/* Energy field effect - adjust size for mobile */}
+        <div className="absolute inset-2 sm:inset-0 rounded-full opacity-50">
           {[...Array(3)].map((_, i) => (
             <div
               key={i}
@@ -57,9 +57,9 @@ const Logo = () => {
           ))}
         </div>
 
-        {/* Rotating energy rings */}
+        {/* Rotating energy rings - adjust for mobile */}
         <div
-          className="absolute inset-8 rounded-full"
+          className="absolute inset-6 sm:inset-8 rounded-full"
           style={{
             transform: `rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg)`,
           }}
@@ -81,8 +81,8 @@ const Logo = () => {
           ))}
         </div>
 
-        {/* Energy particles */}
-        <div className="absolute inset-0">
+        {/* Energy particles - adjust for mobile */}
+        <div className="absolute inset-4 sm:inset-0">
           {[...Array(8)].map((_, i) => (
             <div
               key={i}
@@ -91,10 +91,10 @@ const Logo = () => {
                 background:
                   "radial-gradient(circle, rgba(16, 185, 129, 0.8), transparent)",
                 left: `${
-                  50 + Math.cos((rotation * Math.PI) / 180 + i * 45) * 40
+                  50 + Math.cos((rotation * Math.PI) / 180 + i * 45) * 35
                 }%`,
                 top: `${
-                  50 + Math.sin((rotation * Math.PI) / 180 + i * 45) * 40
+                  50 + Math.sin((rotation * Math.PI) / 180 + i * 45) * 35
                 }%`,
                 transform: `scale(${isHovered ? 1.2 : 0.8})`,
                 opacity: isHovered ? 0.6 : 0.3,
@@ -105,10 +105,10 @@ const Logo = () => {
           ))}
         </div>
 
-        {/* Logo Container */}
+        {/* Logo Container - adjust size for mobile */}
         <div className="absolute inset-0 flex items-center justify-center">
           <div
-            className="relative w-40 h-40 transition-all duration-500"
+            className="relative w-32 sm:w-40 h-32 sm:h-40 transition-all duration-500"
             style={{
               transform: `
                 rotateX(${mousePosition.y * 0.5}deg) 
@@ -120,9 +120,9 @@ const Logo = () => {
             {/* Subtle glow effect */}
             <div
               className={`
-              absolute inset-0 rounded-full transition-all duration-500
-              ${isHovered ? "blur-2xl opacity-40" : "blur-xl opacity-20"}
-            `}
+                absolute inset-0 rounded-full transition-all duration-500
+                ${isHovered ? "blur-2xl opacity-40" : "blur-xl opacity-20"}
+              `}
               style={{
                 background:
                   "radial-gradient(circle at center, rgba(16, 185, 129, 0.5), transparent 70%)",
@@ -132,7 +132,7 @@ const Logo = () => {
             {/* Logo with glass effect */}
             <div className="relative w-full h-full rounded-full overflow-hidden backdrop-blur-sm bg-white/5">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-30" />
-              <div className="absolute inset-0 flex items-center justify-center p-6">
+              <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6">
                 <div className="relative w-full h-full">
                   <Image
                     src="/logo.png"
@@ -155,9 +155,9 @@ const Logo = () => {
                     repeating-radial-gradient(
                       circle at center,
                       transparent,
-                      transparent 15px,
-                      rgba(16, 185, 129, 0.05) 15px,
-                      rgba(16, 185, 129, 0.05) 30px
+                      transparent 10px,
+                      rgba(16, 185, 129, 0.05) 10px,
+                      rgba(16, 185, 129, 0.05) 20px
                     )
                   `,
                   transform: `rotate(${rotation}deg)`,
