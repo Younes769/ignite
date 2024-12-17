@@ -16,30 +16,29 @@ const ParticlesBackground = () => {
     // Set canvas size with device pixel ratio for retina displays
     const setCanvasSize = () => {
       const dpr = window.devicePixelRatio || 1;
-      const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      canvas.width = window.innerWidth * dpr;
+      canvas.height = window.innerHeight * dpr;
       ctx.scale(dpr, dpr);
-      canvas.style.width = `${rect.width}px`;
-      canvas.style.height = `${rect.height}px`;
+      canvas.style.width = `${window.innerWidth}px`;
+      canvas.style.height = `${window.innerHeight}px`;
     };
 
     // Initialize particles with optimized count
     const initParticles = () => {
       particles.current = [];
       const numberOfParticles = Math.min(
-        100,
-        Math.floor((canvas.width * canvas.height) / 20000)
+        50,
+        Math.floor((canvas.width * canvas.height) / 25000)
       );
       
       for (let i = 0; i < numberOfParticles; i++) {
         particles.current.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
-          size: Math.random() * 1.5 + 0.5,
-          speedX: Math.random() * 0.3 - 0.15,
-          speedY: Math.random() * 0.3 - 0.15,
-          opacity: Math.random() * 0.3 + 0.1,
+          size: Math.random() * 2 + 1,
+          speedX: Math.random() * 0.5 - 0.25,
+          speedY: Math.random() * 0.5 - 0.25,
+          opacity: Math.random() * 0.5 + 0.2,
         });
       }
     };
@@ -72,20 +71,27 @@ const ParticlesBackground = () => {
         const distance = Math.sqrt(dx * dx + dy * dy);
 
         // Interactive effect with mouse
-        if (distance < 120) {
+        if (distance < 150) {
           const angle = Math.atan2(dy, dx);
-          const force = (120 - distance) / 120;
-          particle.x -= Math.cos(angle) * force;
-          particle.y -= Math.sin(angle) * force;
-          particle.opacity = Math.min(0.5, particle.opacity + force * 0.1);
+          const force = (150 - distance) / 150;
+          particle.x -= Math.cos(angle) * force * 2;
+          particle.y -= Math.sin(angle) * force * 2;
+          particle.opacity = Math.min(0.8, particle.opacity + force * 0.2);
         } else {
-          particle.opacity = Math.max(0.1, particle.opacity - 0.005);
+          particle.opacity = Math.max(0.2, particle.opacity - 0.01);
         }
 
-        // Draw particle
+        // Draw particle with gradient
+        const gradient = ctx.createRadialGradient(
+          particle.x, particle.y, 0,
+          particle.x, particle.y, particle.size
+        );
+        gradient.addColorStop(0, `rgba(16, 185, 129, ${particle.opacity})`);
+        gradient.addColorStop(1, 'rgba(16, 185, 129, 0)');
+        
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(16, 185, 129, ${particle.opacity})`;
+        ctx.fillStyle = gradient;
         ctx.fill();
 
         // Draw connections (only to nearby particles)
@@ -95,11 +101,11 @@ const ParticlesBackground = () => {
           const dy = particle.y - otherParticle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 100) {
+          if (distance < 120) {
             ctx.beginPath();
             ctx.moveTo(particle.x, particle.y);
             ctx.lineTo(otherParticle.x, otherParticle.y);
-            const opacity = 0.05 * (1 - distance / 100);
+            const opacity = 0.15 * (1 - distance / 120);
             ctx.strokeStyle = `rgba(16, 185, 129, ${opacity})`;
             ctx.stroke();
           }
@@ -116,8 +122,9 @@ const ParticlesBackground = () => {
     const handleMouseMove = (e) => {
       if (!isThrottled) {
         const rect = canvas.getBoundingClientRect();
-        mouse.current.x = e.clientX - rect.left;
-        mouse.current.y = e.clientY - rect.top;
+        const dpr = window.devicePixelRatio || 1;
+        mouse.current.x = (e.clientX - rect.left) * dpr;
+        mouse.current.y = (e.clientY - rect.top) * dpr;
         
         isThrottled = true;
         setTimeout(() => {
@@ -157,7 +164,10 @@ const ParticlesBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ background: 'transparent' }}
+      style={{ 
+        background: 'transparent',
+        mixBlendMode: 'screen'
+      }}
     />
   );
 };
