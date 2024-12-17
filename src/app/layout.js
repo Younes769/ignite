@@ -38,7 +38,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={inter.variable}>
       <body className={`${inter.className} antialiased`}>
-        <main className="min-h-screen relative">
+        <main className="relative overflow-hidden">
           {/* Background gradient */}
           <div className="fixed inset-0 bg-black">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(16,185,129,0.05)_0%,_transparent_60%)]"></div>

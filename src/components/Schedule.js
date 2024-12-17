@@ -8,27 +8,27 @@ const events = [
     day: "Day 1",
     date: "January 9",
     events: [
-      { time: "09:00", title: "Opening Ceremony", description: "Welcome and kickoff", icon: "🎉", duration: 60 },
-      { time: "10:00", title: "Team Formation", description: "Find your perfect team match", icon: "👥", duration: 120 },
-      { time: "12:00", title: "Hacking Begins", description: "Start your innovation journey", icon: "💻", duration: 720 },
+      { time: "09:00", title: "HR sitting in chair and speaking to people and CLICKING THEM IN", description: "Welcome and kickoff", icon: "🎉", duration: 60 },
+      { time: "10:00", title: "people talking to people ig i hate people", description: "Find your perfect team match", icon: "👥", duration: 120 },
+      { time: "12:00", title: "jo3t", description: "Start your innovation journey", icon: "💻", duration: 720 },
     ]
   },
   {
     day: "Day 2",
     date: "January 10",
     events: [
-      { time: "10:00", title: "Mentor Sessions", description: "Get guidance from industry experts", icon: "🎯", duration: 300 },
-      { time: "15:00", title: "Progress Check", description: "Share your progress and get feedback", icon: "📊", duration: 120 },
-      { time: "20:00", title: "Gaming Break", description: "Take a break and have some fun", icon: "🎮", duration: 180 },
+      { time: "10:00", title: "7anmot", description: "Get guidance from industry experts", icon: "🎯", duration: 300 },
+      { time: "15:00", title: "is that tiramisu", description: "Share your progress and get feedback", icon: "📊", duration: 120 },
+      { time: "20:00", title: "7anmot again", description: "Take a break and have some fun", icon: "🎮", duration: 180 },
     ]
   },
   {
     day: "Day 3",
     date: "January 11",
     events: [
-      { time: "09:00", title: "Final Sprint", description: "Last push towards completion", icon: "🚀", duration: 360 },
-      { time: "15:00", title: "Project Submission", description: "Submit your masterpiece", icon: "🎯", duration: 120 },
-      { time: "17:00", title: "Closing Ceremony", description: "Celebrate achievements together", icon: "🏆", duration: 120 },
+      { time: "09:00", title: "ill go get some tiramisu", description: "Last push towards completion", icon: "🚀", duration: 360 },
+      { time: "15:00", title: "people finished doing what people do i guess", description: "Submit your masterpiece", icon: "🎯", duration: 120 },
+      { time: "17:00", title: "Closing Ceremony and the prize must be tiramisu right ? please ? sad me noises", description: "Celebrate achievements together", icon: "🏆", duration: 120 },
     ]
   }
 ];

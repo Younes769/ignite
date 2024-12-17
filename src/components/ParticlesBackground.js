@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef } from "react";
 
 const ParticlesBackground = () => {
   const canvasRef = useRef(null);
@@ -9,7 +9,7 @@ const ParticlesBackground = () => {
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     let animationFrameId;
     let lastTime = 0;
 
@@ -30,7 +30,7 @@ const ParticlesBackground = () => {
         100,
         Math.floor((canvas.width * canvas.height) / 20000)
       );
-      
+
       for (let i = 0; i < numberOfParticles; i++) {
         particles.current.push({
           x: Math.random() * canvas.width,
@@ -52,7 +52,7 @@ const ParticlesBackground = () => {
       lastTime = timestamp;
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      
+
       // Update and draw particles
       particles.current.forEach((particle) => {
         // Update position
@@ -73,12 +73,13 @@ const ParticlesBackground = () => {
 
       // Find connections and create shapes
       particles.current.forEach((particle, i) => {
-        particles.current.slice(i + 1).forEach(otherParticle => {
+        particles.current.slice(i + 1).forEach((otherParticle) => {
           const dx = particle.x - otherParticle.x;
           const dy = particle.y - otherParticle.y;
           const distance = Math.sqrt(dx * dx + dy * dy);
 
-          if (distance < 150) { // Connection distance threshold
+          if (distance < 150) {
+            // Connection distance threshold
             particle.connections.push(otherParticle);
             otherParticle.connections.push(particle);
           }
@@ -87,14 +88,17 @@ const ParticlesBackground = () => {
 
       // Draw connections first (lines behind dots)
       ctx.beginPath();
-      particles.current.forEach(particle => {
-        particle.connections.forEach(connected => {
-          const distance = Math.hypot(particle.x - connected.x, particle.y - connected.y);
-          const opacity = 1 - (distance / 150);
-          
+      particles.current.forEach((particle) => {
+        particle.connections.forEach((connected) => {
+          const distance = Math.hypot(
+            particle.x - connected.x,
+            particle.y - connected.y
+          );
+          const opacity = 1 - distance / 150;
+
           ctx.strokeStyle = `rgba(16, 185, 129, ${opacity * 0.5})`;
           ctx.lineWidth = 1;
-          
+
           ctx.moveTo(particle.x, particle.y);
           ctx.lineTo(connected.x, connected.y);
         });
@@ -102,17 +106,17 @@ const ParticlesBackground = () => {
       ctx.stroke();
 
       // Draw particles
-      particles.current.forEach(particle => {
+      particles.current.forEach((particle) => {
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.8)';
+        ctx.fillStyle = "rgba(16, 185, 129, 0.8)";
         ctx.fill();
 
         // Optional: Add a subtle glow to connection points
         if (particle.connections.length > 0) {
           ctx.beginPath();
           ctx.arc(particle.x, particle.y, particle.size + 1, 0, Math.PI * 2);
-          ctx.fillStyle = 'rgba(16, 185, 129, 0.1)';
+          ctx.fillStyle = "rgba(16, 185, 129, 0.1)";
           ctx.fill();
         }
       });
@@ -120,7 +124,7 @@ const ParticlesBackground = () => {
       // Find and draw triangles
       particles.current.forEach((p1, i) => {
         p1.connections.forEach((p2, j) => {
-          p2.connections.forEach(p3 => {
+          p2.connections.forEach((p3) => {
             if (p3.connections.includes(p1)) {
               // We found a triangle
               const opacity = 0.03;
@@ -149,7 +153,7 @@ const ParticlesBackground = () => {
         const dpr = window.devicePixelRatio || 1;
         mouse.current.x = (e.clientX - rect.left) * dpr;
         mouse.current.y = (e.clientY - rect.top) * dpr;
-        
+
         isThrottled = true;
         setTimeout(() => {
           isThrottled = false;
@@ -161,7 +165,7 @@ const ParticlesBackground = () => {
       if (!isThrottled) {
         setCanvasSize();
         initParticles();
-        
+
         isThrottled = true;
         setTimeout(() => {
           isThrottled = false;
@@ -172,14 +176,14 @@ const ParticlesBackground = () => {
     // Initialize
     setCanvasSize();
     initParticles();
-    window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('resize', handleResize);
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("resize", handleResize);
     animationFrameId = requestAnimationFrame(animate);
 
     // Cleanup
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("resize", handleResize);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -188,12 +192,12 @@ const ParticlesBackground = () => {
     <canvas
       ref={canvasRef}
       className="fixed inset-0 pointer-events-none z-0"
-      style={{ 
-        background: 'transparent',
-        mixBlendMode: 'screen'
+      style={{
+        background: "transparent",
+        mixBlendMode: "screen",
       }}
     />
   );
 };
 
-export default ParticlesBackground; 
+export default ParticlesBackground;

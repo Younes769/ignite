@@ -27,9 +27,9 @@ export default function Home() {
       </div>
 
       {/* Main content */}
-      <div className="relative min-h-screen">
+      <div className="relative min-h-screen overflow-hidden">
         {/* Add responsive padding */}
-        <div className="px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <Logo />
           <Hero onRegisterClick={() => setIsModalOpen(true)} />
           <Stats />

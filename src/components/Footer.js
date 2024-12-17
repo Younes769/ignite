@@ -23,20 +23,18 @@ const Footer = () => {
               DevImpact
             </span>
           </div>
-          
+
           <div className="flex items-center gap-6 text-sm text-white/40">
             {socialLinks.map((link, index) => (
-              <a 
-                key={index}
-                href="#" 
-                className="relative group"
-              >
-                <span className="relative z-10 hover:text-emerald-400 transition-colors">{link}</span>
+              <a key={index} href="#" className="relative group">
+                <span className="relative z-10 hover:text-emerald-400 transition-colors">
+                  {link}
+                </span>
                 <span className="absolute inset-x-0 -bottom-1 h-px bg-gradient-to-r from-emerald-500/0 via-emerald-500/70 to-emerald-500/0 origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
               </a>
             ))}
           </div>
-          
+
           <div className="text-sm text-white/40">
             © 2024 NCS Club. All rights reserved.
           </div>
@@ -46,4 +44,4 @@ const Footer = () => {
   );
 };
 
-export default Footer; 
+export default Footer;
