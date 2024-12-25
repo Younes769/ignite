@@ -22,7 +22,7 @@ export const metadata = {
     default: 'DevImpact | NCS Club',
     template: '%s | DevImpact'
   },
-  description: 'Join us for 72 hours of innovation, creativity, and impact at NIT Rahmania. A hackathon where developers make an impact, organized by NCS Club.',
+  description: '🚀 Join the biggest hackathon at NIT Rahmania! 72 hours of coding, innovation, and amazing prizes. Organized by NCS Club. Register now and make an impact! 💻✨',
   keywords: ['hackathon', 'coding', 'technology', 'innovation', 'NCS Club', 'NIT Rahmania'],
   authors: [{ name: 'NCS Club' }],
   
@@ -31,8 +31,8 @@ export const metadata = {
     locale: 'en_US',
     url: 'https://devimpact.vercel.app',
     siteName: 'DevImpact Hackathon',
-    title: 'DevImpact | NCS Club',
-    description: 'Join us for 72 hours of innovation, creativity, and impact at NIT Rahmania.',
+    title: 'DevImpact | Where Developers Make an Impact 🚀',
+    description: '🎉 Join us for an epic 72-hour hackathon at NIT Rahmania!\n\n💻 Code, Create, Innovate\n🏆 Amazing Prizes\n🤝 Network with Industry Experts\n\nOrganized by NCS Club ✨',
     images: [
       {
         url: '/og-image.png',
@@ -43,10 +43,18 @@ export const metadata = {
     ]
   },
 
+  // Discord specific metadata
+  discord: {
+    type: 'rich',
+    title: 'DevImpact Hackathon 2024 🚀',
+    description: '🎉 Join us for an epic 72-hour hackathon at NIT Rahmania!\n\n💻 Code, Create, Innovate\n🏆 Amazing Prizes\n🤝 Network with Industry Experts\n\nOrganized by NCS Club ✨',
+    color: '10b981', // Emerald color
+  },
+
   twitter: {
     card: 'summary_large_image',
-    title: 'DevImpact | NCS Club',
-    description: 'Join us for 72 hours of innovation, creativity, and impact at NIT Rahmania.',
+    title: 'DevImpact | Where Developers Make an Impact 🚀',
+    description: '🎉 Join the biggest hackathon at NIT Rahmania! 72 hours of coding, innovation, and amazing prizes. Register now! 💻✨',
     images: ['/og-image.png'],
     creator: '@ncsclub'
   },
@@ -63,6 +71,13 @@ export default function RootLayout({ children }) {
     <html lang="en" className={inter.variable}>
       <head>
         <link rel="icon" type="image/png" href="/logo.png" />
+        {/* Discord specific meta tags */}
+        <meta property="og:site_name" content="DevImpact Hackathon" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:image:alt" content="DevImpact Hackathon - Where Developers Make an Impact" />
+        <meta name="theme-color" content="#10b981" />
       </head>
       <body className={`${inter.className} antialiased`}>
         <LoadingScreen />
@@ -70,12 +85,10 @@ export default function RootLayout({ children }) {
         <ParticlesBackground />
         
         <main className="relative overflow-hidden">
-          {/* Background gradient */}
           <div className="fixed inset-0 bg-black">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,_rgba(16,185,129,0.05)_0%,_transparent_60%)]"></div>
           </div>
           
-          {/* Content */}
           <div className="relative">
             {children}
           </div>
