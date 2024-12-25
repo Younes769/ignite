@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from 'react';
-import Logo from '@/components/Logo';
 import Hero from '@/components/Hero';
 import About from '@/components/About';
 import Stats from '@/components/Stats';
@@ -30,7 +29,6 @@ export default function Home() {
       <div className="relative min-h-screen overflow-hidden">
         {/* Add responsive padding */}
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <Logo />
           <Hero onRegisterClick={() => setIsModalOpen(true)} />
           <Stats />
           <About />

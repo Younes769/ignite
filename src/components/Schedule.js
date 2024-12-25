@@ -76,56 +76,209 @@ const Schedule = () => {
     return (duration / 60) * (100 / 16); // Convert minutes to timeline percentage
   };
 
-  const renderTimeline = () => (
-    <div className="relative">
-      {/* Time indicators */}
-      <div className="absolute left-0 top-0 h-full w-12 flex flex-col justify-between text-xs text-white/40">
-        {[...Array(9)].map((_, i) => (
-          <div key={i} className="relative">
-            <div className="absolute -right-4 w-2 h-px bg-white/10"></div>
-            {`${(i + 8).toString().padStart(2, '0')}:00`}
-          </div>
-        ))}
-      </div>
+  const renderTimeline = () => {
+    const getExactTimePosition = (time) => {
+      const [hours, minutes] = time.split(':').map(Number);
+      const totalMinutes = hours * 60 + minutes;
+      const startMinutes = 8 * 60;
+      const totalDayMinutes = 16 * 60;
+      return ((totalMinutes - startMinutes) / totalDayMinutes) * 100;
+    };
 
-      {/* Events on timeline */}
-      <div 
-        className={`
-          relative ml-16 h-[400px] transition-opacity duration-300
-          ${isTransitioning ? 'opacity-0' : 'opacity-100'}
-        `}
-      >
-        {events[activeDay].events.map((event, index) => (
-          <div
-            key={index}
-            className="absolute left-0 transform -translate-y-1/2 w-full"
-            style={{ top: `${getTimelinePosition(event.time)}%` }}
-            onMouseEnter={() => {
-              setHoveredEvent(index);
-              setPreviewEvent(event);
-            }}
-            onMouseLeave={() => {
-              setHoveredEvent(null);
-              setPreviewEvent(null);
-            }}
-          >
-            <div 
-              className={`
-                relative h-8 bg-emerald-500/10 rounded-lg transition-all duration-300
-                ${hoveredEvent === index ? 'bg-emerald-500/20 scale-y-110' : ''}
-              `}
-              style={{ width: `${getEventDuration(event.duration)}%` }}
-            >
-              <div className="absolute inset-y-0 left-2 flex items-center gap-2">
-                <span className="text-lg">{event.icon}</span>
-                <span className="text-sm font-medium text-white/80">{event.title}</span>
-              </div>
+    const sortedEvents = [...events[activeDay].events].sort((a, b) => {
+      const timeA = getExactTimePosition(a.time);
+      const timeB = getExactTimePosition(b.time);
+      return timeA - timeB;
+    });
+
+    // Enhanced lane assignment with dynamic height calculation
+    const assignLanesAndHeights = (events) => {
+      const lanes = [];
+      const eventHeights = new Map();
+      const MIN_GAP = 6.25; // Minimum gap percentage (one hour = 6.25% of timeline)
+      const BASE_HEIGHT = 80;
+
+      events.forEach((event, index) => {
+        const eventStart = getExactTimePosition(event.time);
+        const eventEnd = eventStart + (event.duration / (16 * 60)) * 100;
+
+        // Check proximity to previous and next events
+        const prevEvent = events[index - 1];
+        const nextEvent = events[index + 1];
+        
+        let heightReduction = 0;
+        let verticalOffset = 0;
+        
+        // Calculate gap to previous event
+        if (prevEvent) {
+          const prevStart = getExactTimePosition(prevEvent.time);
+          const gap = Math.abs(eventStart - prevStart);
+          
+          // Adjust height and position based on gap size
+          if (gap <= MIN_GAP) { // One hour or less difference
+            heightReduction = BASE_HEIGHT * 0.5;
+            if (eventStart > prevStart) {
+              verticalOffset = 3; // Push down current event
+            } else {
+              verticalOffset = -3; // Push up current event
+            }
+          } else if (gap <= MIN_GAP * 1.5) { // 1.5 hours difference
+            heightReduction = BASE_HEIGHT * 0.3;
+            if (eventStart > prevStart) {
+              verticalOffset = 2;
+            } else {
+              verticalOffset = -2;
+            }
+          }
+        }
+
+        // Calculate gap to next event
+        if (nextEvent) {
+          const nextStart = getExactTimePosition(nextEvent.time);
+          const gap = Math.abs(nextStart - eventStart);
+          
+          // Adjust height based on gap to next event
+          if (gap <= MIN_GAP) {
+            heightReduction = Math.max(heightReduction, BASE_HEIGHT * 0.5);
+          } else if (gap <= MIN_GAP * 1.5) {
+            heightReduction = Math.max(heightReduction, BASE_HEIGHT * 0.3);
+          }
+        }
+
+        // Calculate final height and store vertical offset
+        const finalHeight = Math.max(BASE_HEIGHT - heightReduction, 45);
+        eventHeights.set(event, finalHeight);
+        event.verticalOffset = verticalOffset;
+
+        // Find first available lane with increased spacing
+        let laneIndex = 0;
+        while (true) {
+          if (!lanes[laneIndex]) {
+            lanes[laneIndex] = [{ event, start: eventStart, end: eventEnd }];
+            event.lane = laneIndex;
+            break;
+          }
+
+          const canUseLane = lanes[laneIndex].every(
+            occupyingEvent =>
+              eventEnd <= occupyingEvent.start - MIN_GAP/2 || 
+              eventStart >= occupyingEvent.end + MIN_GAP/2
+          );
+
+          if (canUseLane) {
+            lanes[laneIndex].push({ event, start: eventStart, end: eventEnd });
+            event.lane = laneIndex;
+            break;
+          }
+
+          laneIndex++;
+        }
+      });
+
+      return { totalLanes: lanes.length, eventHeights };
+    };
+
+    const { totalLanes, eventHeights } = assignLanesAndHeights(sortedEvents);
+
+    return (
+      <div className="relative">
+        {/* Time indicators - Made responsive */}
+        <div className="absolute left-0 top-0 h-full w-12 sm:w-20 flex flex-col justify-between text-[10px] sm:text-xs text-white/40">
+          {[...Array(17)].map((_, i) => (
+            <div key={i} className="relative">
+              <div className="absolute -right-2 sm:-right-4 w-1 sm:w-2 h-px bg-white/10"></div>
+              {`${(i + 8).toString().padStart(2, '0')}:00`}
             </div>
+          ))}
+        </div>
+
+        {/* Events on timeline - Made responsive */}
+        <div 
+          className={`
+            relative ml-16 sm:ml-24 h-[600px] sm:h-[800px] transition-opacity duration-300
+            ${isTransitioning ? 'opacity-0' : 'opacity-100'}
+          `}
+        >
+          <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-500/20" />
+
+          {sortedEvents.map((event, index) => {
+            const topPosition = getExactTimePosition(event.time);
+            
+            return (
+              <div
+                key={index}
+                className="absolute w-full"
+                style={{
+                  top: `${topPosition}%`,
+                  transform: `translateY(-${event.verticalOffset || 0}rem)`
+                }}
+              >
+                {/* Event card - Made responsive */}
+                <div 
+                  className={`
+                    group relative ml-4 sm:ml-8
+                    transform transition-all duration-300
+                    hover:translate-x-1
+                  `}
+                  onMouseEnter={() => setHoveredEvent(event)}
+                  onMouseLeave={() => setHoveredEvent(null)}
+                >
+                  {/* Time marker */}
+                  <div className="absolute -left-4 sm:-left-8 top-1/2 -translate-y-1/2 flex items-center">
+                    <div className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-emerald-500"></div>
+                    <div className="h-px w-2 sm:w-4 bg-emerald-500/50"></div>
+                  </div>
+
+                  {/* Event content */}
+                  <div 
+                    className={`
+                      relative inline-block max-w-[calc(100%-2rem)] sm:max-w-md
+                      p-3 sm:p-4 rounded-lg
+                      bg-white/5 hover:bg-white/10
+                      border border-white/10 hover:border-emerald-500/30
+                      transition-all duration-300
+                    `}
+                  >
+                    <div className="flex items-start gap-3">
+                      {/* Icon - Made responsive */}
+                      <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                        <span className="text-base sm:text-xl">{event.icon}</span>
+                      </div>
+
+                      {/* Text content - Made responsive */}
+                      <div className="min-w-0 flex-1">
+                        <div className="font-medium text-sm sm:text-base text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
+                          {event.title}
+                        </div>
+                        <div className="mt-1 text-xs sm:text-sm text-white/60 line-clamp-2">
+                          {event.description}
+                        </div>
+                        <div className="mt-2 flex items-center gap-2 text-[10px] sm:text-xs text-white/40">
+                          <span>{event.time}</span>
+                          <span>•</span>
+                          <span>
+                            {Math.floor(event.duration / 60)}h
+                            {event.duration % 60 ? `${event.duration % 60}m` : ''}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* Hour grid lines */}
+          <div className="absolute inset-0 grid grid-cols-1 gap-[6.25%] -z-10">
+            {[...Array(16)].map((_, i) => (
+              <div key={i} className="border-l border-white/5" />
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderCalendar = () => (
     <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">

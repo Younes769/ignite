@@ -90,6 +90,9 @@ export default {
         '65': '0.65',
         '85': '0.85',
       },
+      screens: {
+        'xs': '375px',
+      },
     },
   },
   plugins: [],

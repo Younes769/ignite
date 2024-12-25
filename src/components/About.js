@@ -135,7 +135,7 @@ const About = () => {
             `}
           >
             <a 
-              href="https://www.google.com/maps?q=Rahmania"
+              href="https://maps.app.goo.gl/qb9FvtxgdrSf5NVG8"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 transition-colors"

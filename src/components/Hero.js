@@ -2,12 +2,20 @@
 
 import { useEffect, useState } from "react";
 
-const Hero = ({ onRegisterClick }) => {
+const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
   }, []);
+
+  const scrollToSchedule = (e) => {
+    e.preventDefault();
+    const scheduleSection = document.getElementById('schedule-section');
+    if (scheduleSection) {
+      scheduleSection.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <div className="max-w-4xl mx-auto text-center mt-24 sm:mt-44 px-4 sm:px-6 lg:px-8">
@@ -67,7 +75,6 @@ const Hero = ({ onRegisterClick }) => {
         `}
       >
         <button 
-          onClick={onRegisterClick}
           className="group relative w-full sm:w-auto min-w-[200px] sm:min-w-[220px] hover:-translate-y-0.5 transition-all duration-300"
         >
           <span className="absolute inset-0 bg-emerald-500 rounded-xl blur-sm opacity-10 group-hover:opacity-20 transition-opacity"></span>
@@ -77,8 +84,8 @@ const Hero = ({ onRegisterClick }) => {
           </span>
         </button>
 
-        <a 
-          href="#schedule"
+        <button 
+          onClick={scrollToSchedule}
           className="group relative w-full sm:w-auto min-w-[200px] sm:min-w-[220px] hover:-translate-y-0.5 transition-all duration-300"
         >
           <span className="absolute inset-0 bg-white/5 rounded-xl blur-sm opacity-10 group-hover:opacity-20 transition-opacity"></span>
@@ -86,7 +93,7 @@ const Hero = ({ onRegisterClick }) => {
             <span className="font-semibold text-base sm:text-lg">View Schedule</span>
             <span className="opacity-0 group-hover:opacity-100 transform group-hover:translate-x-1.5 transition-all duration-300">→</span>
           </span>
-        </a>
+        </button>
       </div>
 
       {/* Decorative elements - adjust size for mobile */}
