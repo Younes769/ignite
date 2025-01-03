@@ -1,17 +1,39 @@
 {
-  "name": "DevImpact Hackathon",
+  "name": "DevImpact Hackathon 2024",
   "short_name": "DevImpact",
-  "description": "72 hours of innovation, creativity, and impact at NIT Rahmania",
+  "description": "72-hour hackathon at NIT Rahmania where developers make an impact",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#000000",
   "theme_color": "#10b981",
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/logo-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/meta/screenshot-desktop.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "DevImpact Hackathon Desktop View"
+    },
+    {
+      "src": "/meta/screenshot-mobile.png",
+      "sizes": "1080x1920",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "DevImpact Hackathon Mobile View"
     }
   ]
 } 

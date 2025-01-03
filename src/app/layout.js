@@ -19,51 +19,106 @@ export const viewport = {
 export const metadata = {
   metadataBase: new URL('https://devimpact.vercel.app'),
   title: {
-    default: 'DevImpact | NCS Club',
-    template: '%s | DevImpact'
+    default: 'DevImpact Hackathon 2024 | NCS Club',
+    template: '%s | DevImpact 2024'
   },
-  description: '🚀 Join the biggest hackathon at NIT Rahmania! 72 hours of coding, innovation, and amazing prizes. Organized by NCS Club. Register now and make an impact! 💻✨',
-  keywords: ['hackathon', 'coding', 'technology', 'innovation', 'NCS Club', 'NIT Rahmania'],
-  authors: [{ name: 'NCS Club' }],
+  description: '🚀 Join the most exciting hackathon at NIT Rahmania! 72 hours of non-stop innovation, coding challenges, mentorship, and amazing prizes. Connect with fellow developers, build groundbreaking projects, and make a lasting impact! 💻✨',
+  keywords: [
+    'hackathon',
+    'coding competition',
+    'tech innovation',
+    'software development',
+    'NCS Club',
+    'NIT Rahmania',
+    'student hackathon',
+    'programming challenge',
+    'developer community',
+    'tech event',
+    'coding marathon',
+    'project building',
+    'team collaboration',
+    'tech networking',
+    'software engineering'
+  ],
+  authors: [{ name: 'NCS Club', url: 'https://devimpact.vercel.app' }],
+  category: 'Technology',
   
   openGraph: {
     type: 'website',
     locale: 'en_US',
     url: 'https://devimpact.vercel.app',
-    siteName: 'DevImpact Hackathon',
-    title: 'DevImpact | Where Developers Make an Impact 🚀',
-    description: '🎉 Join us for an epic 72-hour hackathon at NIT Rahmania!\n\n💻 Code, Create, Innovate\n🏆 Amazing Prizes\n🤝 Network with Industry Experts\n\nOrganized by NCS Club ✨',
+    siteName: 'DevImpact Hackathon 2024',
+    title: 'DevImpact 2024 | Where Innovation Meets Impact 🚀',
+    description: '🎯 72 Hours of Pure Innovation\n💡 Build. Learn. Network.\n🏆 Amazing Prizes & Recognition\n🤝 Expert Mentorship\n\n Join +60 passionate developers at NIT Rahmania\'s premier hackathon! 🌟',
     images: [
       {
-        url: '/og-image.png',
+        url: '/meta/og-image.png',
         width: 1200,
         height: 630,
-        alt: 'DevImpact Hackathon'
+        alt: 'DevImpact Hackathon 2024 - Where Innovation Meets Impact',
+        type: 'image/png',
+      },
+      {
+        url: '/meta/og-image-square.png',
+        width: 600,
+        height: 600,
+        alt: 'DevImpact Hackathon 2024 Logo',
+        type: 'image/png',
       }
     ]
   },
 
-  // Discord specific metadata
+  // Discord rich embed
   discord: {
     type: 'rich',
-    title: 'DevImpact Hackathon 2024 🚀',
-    description: '🎉 Join us for an epic 72-hour hackathon at NIT Rahmania!\n\n💻 Code, Create, Innovate\n🏆 Amazing Prizes\n🤝 Network with Industry Experts\n\nOrganized by NCS Club ✨',
-    color: '10b981', // Emerald color
+    title: '🏆 DevImpact Hackathon 2024',
+    description: '🎯 72 Hours of Pure Innovation\n💡 Build. Learn. Network.\n🏆 Amazing Prizes & Recognition\n🤝 Expert Mentorship\n\nJoin +60 passionate developers at NIT Rahmania\'s premier hackathon! 🌟',
+    color: '10b981',
+    image: '/meta/og-image.png'
   },
 
   twitter: {
     card: 'summary_large_image',
-    title: 'DevImpact | Where Developers Make an Impact 🚀',
-    description: '🎉 Join the biggest hackathon at NIT Rahmania! 72 hours of coding, innovation, and amazing prizes. Register now! 💻✨',
-    images: ['/og-image.png'],
-    creator: '@ncsclub'
+    title: 'DevImpact 2024 | Where Innovation Meets Impact 🚀',
+    description: '🎯 72-hour coding adventure at NIT Rahmania!\n💡 Build amazing projects\n🤝 Network with industry experts\n\nJoin +60 developers in this epic hackathon! 🌟',
+    images: [{
+      url: '/meta/og-image.png',
+      width: 1200,
+      height: 630,
+      alt: 'DevImpact Hackathon 2024 - Where Innovation Meets Impact',
+      type: 'image/png',
+    }],
+    creator: '@ncsclub',
+    site: '@ncsclub',
+    creatorId: '1234567890', // Replace with actual Twitter ID
+  },
+
+  other: {
+    'apple-mobile-web-app-capable': 'yes',
+    'apple-mobile-web-app-status-bar-style': 'black-translucent',
+    'apple-mobile-web-app-title': 'DevImpact 2024',
   },
 
   icons: {
-    icon: '/logo.png'
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/logo.png', sizes: '32x32', type: 'image/png' },
+      { url: '/logo-192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/logo-512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: ['/shortcut-icon.png'],
   },
   
-  manifest: '/manifest.json'
+  manifest: '/manifest.json',
+  
+  verification: {
+    google: 'your-google-site-verification', // Add your verification code
+    yandex: 'your-yandex-verification', // Add if needed
+    me: ['your-personal-website'] // Add if needed
+  }
 };
 
 export default function RootLayout({ children }) {
