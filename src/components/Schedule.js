@@ -8,38 +8,106 @@ const events = [
     day: "Day 1",
     date: "January 9",
     events: [
-      { time: "09:00", title: "HR sitting in chair and speaking to people and CLICKING THEM IN", description: "Welcome and kickoff", icon: "🎉", duration: 60 },
-      { time: "10:00", title: "people talking to people ig i hate people", description: "Find your perfect team match", icon: "👥", duration: 120 },
-      { time: "12:00", title: "jo3t", description: "Start your innovation journey", icon: "💻", duration: 720 },
+      { time: "08:00", title: "Check In & Registration", description: "HR sitting in chairs, checking names, and clicking people in. Don't forget to smile for your badge photo! 📸", icon: "✍️", duration: 90 },
+      { time: "10:15", title: "Opening Ceremony", description: "Time for some inspirational speeches that'll make you feel like you can hack NASA (please don't actually try that)", icon: "🎭", duration: 60 },
+      { time: "11:30", title: "Lunch Break", description: "First power-up of the day! Time to fuel those brain cells", icon: "🍽️", duration: 60 },
+      { time: "13:15", title: "Challenge Reveal", description: "The moment of truth! What impossible problems will you be solving in the next 72 hours?", icon: "🎯", duration: 45 },
+      { time: "14:15", title: "Let the Hacking Begin!", description: "Fingers on keyboards! May the code be with you", icon: "⚡", duration: 285 },
+      { time: "19:00", title: "Dinner Time", description: "Time to rest those typing fingers and feed that big brain of yours", icon: "🍕", duration: 60 },
+      { time: "02:00", title: "Midnight Snacks", description: "For the night owls and the 'just one more bug' fixers", icon: "🌙", duration: 60 }
     ]
   },
   {
     day: "Day 2",
     date: "January 10",
     events: [
-      { time: "10:00", title: "7anmot", description: "Get guidance from industry experts", icon: "🎯", duration: 300 },
-      { time: "15:00", title: "is that tiramisu", description: "Share your progress and get feedback", icon: "📊", duration: 120 },
-      { time: "20:00", title: "7anmot again", description: "Take a break and have some fun", icon: "🎮", duration: 180 },
+      { time: "08:00", title: "Breakfast", description: "Rise and shine, hackers! Coffee loading... ⌛", icon: "☕", duration: 60 },
+      { time: "09:00", title: "Back to Hacking", description: "Where did we put that semicolon again?", icon: "💻", duration: 150 },
+      { time: "11:30", title: "Lunch Break", description: "More fuel for the coding machine!", icon: "🍽️", duration: 60 },
+      { time: "13:00", title: "Jum'ah Prayer", description: "Take a peaceful break from debugging", icon: "🕌", duration: 60 },
+      { time: "14:15", title: "Fun Activities", description: "Time to stretch those legs! Yes, programmers need exercise too", icon: "🎮", duration: 90 },
+      { time: "15:45", title: "Return to Hacking", description: "Back to turning coffee into code", icon: "⚡", duration: 195 },
+      { time: "19:00", title: "Dinner Break", description: "Food.exe has started running", icon: "🍝", duration: 60 },
+      { time: "02:00", title: "Late Night Snacks", description: "Debugging fuel available here!", icon: "🌙", duration: 60 }
     ]
   },
   {
     day: "Day 3",
     date: "January 11",
     events: [
-      { time: "09:00", title: "ill go get some tiramisu", description: "Last push towards completion", icon: "🚀", duration: 360 },
-      { time: "15:00", title: "people finished doing what people do i guess", description: "Submit your masterpiece", icon: "🎯", duration: 120 },
-      { time: "17:00", title: "Closing Ceremony and the prize must be tiramisu right ? please ? sad me noises", description: "Celebrate achievements together", icon: "🏆", duration: 120 },
+      { time: "08:00", title: "Final Breakfast", description: "Last chance to caffeinate before the big finale!", icon: "☕", duration: 60 },
+      { time: "09:00", title: "Final Sprint", description: "Panic coding intensifies! Just kidding... (not really)", icon: "⚡", duration: 180 },
+      { time: "12:00", title: "Code Freeze", description: "STOP! Hammer time... I mean, coding time is up!", icon: "🥶", duration: 105 },
+      { time: "13:45", title: "Project Presentations", description: "Show off your sleep-deprived masterpieces!", icon: "🎤", duration: 135 },
+      { time: "16:30", title: "Closing Ceremony", description: "Time to find out who's taking home the glory (and the prizes)!", icon: "🏆", duration: 60 }
     ]
   }
 ];
 
+const style = `
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const additionalStyles = `
+  @keyframes bounce-x {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(3px); }
+  }
+  
+  @keyframes fade-in-up {
+    0% { opacity: 0; transform: translate(-50%, 20px); }
+    100% { opacity: 1; transform: translate(-50%, 0); }
+  }
+  
+  .animate-bounce-x {
+    animation: bounce-x 1s infinite;
+  }
+  
+  .animate-fade-in-up {
+    animation: fade-in-up 0.5s ease-out forwards;
+  }
+`;
+
+const useIsClient = () => {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => setIsClient(true), []);
+  return isClient;
+};
+
 const Schedule = () => {
+  const isClient = useIsClient();
   const [isVisible, setIsVisible] = useState(false);
   const [activeDay, setActiveDay] = useState(0);
   const [hoveredEvent, setHoveredEvent] = useState(null);
   const [viewMode, setViewMode] = useState('timeline');
   const [previewEvent, setPreviewEvent] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [dimensions, setDimensions] = useState({
+    width: 260,
+    markerWidth: 24,
+    laneSpacing: 32
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      const isMobile = window.innerWidth < 768;
+      setDimensions({
+        width: isMobile ? 260 : 320,
+        markerWidth: isMobile ? 24 : 32,
+        laneSpacing: isMobile ? 32 : 40
+      });
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -59,6 +127,13 @@ const Schedule = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = style + additionalStyles;
+    document.head.appendChild(styleSheet);
+    return () => styleSheet.remove();
+  }, []);
+
   const handleDayChange = (index) => {
     setIsTransitioning(true);
     setTimeout(() => {
@@ -68,8 +143,18 @@ const Schedule = () => {
   };
 
   const getTimelinePosition = (time) => {
-    const [hours] = time.split(':').map(Number);
-    return (hours - 8) * (100 / 16); // Assuming 8 AM to midnight (16 hours) timeline
+    const [hours, minutes] = time.split(':').map(Number);
+    let totalMinutes = hours * 60 + minutes;
+    const startMinutes = 8 * 60; // 8:00 AM
+    
+    // Handle times after midnight
+    if (hours < 8) {
+      totalMinutes = (hours + 24) * 60 + minutes;
+    }
+    
+    const totalDayMinutes = (26 - 8) * 60; // 18 hours (8:00 AM to 2:00 AM next day)
+    const position = ((totalMinutes - startMinutes) / totalDayMinutes) * 100;
+    return Math.max(0, Math.min(100, position));
   };
 
   const getEventDuration = (duration) => {
@@ -77,203 +162,222 @@ const Schedule = () => {
   };
 
   const renderTimeline = () => {
-    const getExactTimePosition = (time) => {
-      const [hours, minutes] = time.split(':').map(Number);
-      const totalMinutes = hours * 60 + minutes;
-      const startMinutes = 8 * 60;
-      const totalDayMinutes = 16 * 60;
-      return ((totalMinutes - startMinutes) / totalDayMinutes) * 100;
-    };
-
     const sortedEvents = [...events[activeDay].events].sort((a, b) => {
-      const timeA = getExactTimePosition(a.time);
-      const timeB = getExactTimePosition(b.time);
+      const [hoursA, minutesA] = a.time.split(':').map(Number);
+      const [hoursB, minutesB] = b.time.split(':').map(Number);
+      const timeA = hoursA * 60 + minutesA;
+      const timeB = hoursB * 60 + minutesB;
       return timeA - timeB;
     });
 
-    // Enhanced lane assignment with dynamic height calculation
-    const assignLanesAndHeights = (events) => {
+    // Assign lanes first
+    const assignLanes = (events) => {
       const lanes = [];
-      const eventHeights = new Map();
-      const MIN_GAP = 6.25; // Minimum gap percentage (one hour = 6.25% of timeline)
-      const BASE_HEIGHT = 80;
+      events.forEach(event => {
+        const [hours, minutes] = event.time.split(':').map(Number);
+        const startTime = hours * 60 + minutes;
+        const endTime = startTime + event.duration;
 
-      events.forEach((event, index) => {
-        const eventStart = getExactTimePosition(event.time);
-        const eventEnd = eventStart + (event.duration / (16 * 60)) * 100;
-
-        // Check proximity to previous and next events
-        const prevEvent = events[index - 1];
-        const nextEvent = events[index + 1];
-        
-        let heightReduction = 0;
-        let verticalOffset = 0;
-        
-        // Calculate gap to previous event
-        if (prevEvent) {
-          const prevStart = getExactTimePosition(prevEvent.time);
-          const gap = Math.abs(eventStart - prevStart);
-          
-          // Adjust height and position based on gap size
-          if (gap <= MIN_GAP) { // One hour or less difference
-            heightReduction = BASE_HEIGHT * 0.5;
-            if (eventStart > prevStart) {
-              verticalOffset = 3; // Push down current event
-            } else {
-              verticalOffset = -3; // Push up current event
-            }
-          } else if (gap <= MIN_GAP * 1.5) { // 1.5 hours difference
-            heightReduction = BASE_HEIGHT * 0.3;
-            if (eventStart > prevStart) {
-              verticalOffset = 2;
-            } else {
-              verticalOffset = -2;
-            }
-          }
-        }
-
-        // Calculate gap to next event
-        if (nextEvent) {
-          const nextStart = getExactTimePosition(nextEvent.time);
-          const gap = Math.abs(nextStart - eventStart);
-          
-          // Adjust height based on gap to next event
-          if (gap <= MIN_GAP) {
-            heightReduction = Math.max(heightReduction, BASE_HEIGHT * 0.5);
-          } else if (gap <= MIN_GAP * 1.5) {
-            heightReduction = Math.max(heightReduction, BASE_HEIGHT * 0.3);
-          }
-        }
-
-        // Calculate final height and store vertical offset
-        const finalHeight = Math.max(BASE_HEIGHT - heightReduction, 45);
-        eventHeights.set(event, finalHeight);
-        event.verticalOffset = verticalOffset;
-
-        // Find first available lane with increased spacing
         let laneIndex = 0;
-        while (true) {
+        let foundLane = false;
+
+        while (!foundLane) {
           if (!lanes[laneIndex]) {
-            lanes[laneIndex] = [{ event, start: eventStart, end: eventEnd }];
-            event.lane = laneIndex;
-            break;
+            lanes[laneIndex] = [];
+            foundLane = true;
+          } else {
+            const canUseLane = lanes[laneIndex].every(existingEvent => {
+              const [existingHours, existingMinutes] = existingEvent.time.split(':').map(Number);
+              const existingStart = existingHours * 60 + existingMinutes;
+              const existingEnd = existingStart + existingEvent.duration;
+              return endTime + 30 <= existingStart || startTime >= existingEnd + 30;
+            });
+
+            if (canUseLane) {
+              foundLane = true;
+            } else {
+              laneIndex++;
+            }
           }
 
-          const canUseLane = lanes[laneIndex].every(
-            occupyingEvent =>
-              eventEnd <= occupyingEvent.start - MIN_GAP/2 || 
-              eventStart >= occupyingEvent.end + MIN_GAP/2
-          );
-
-          if (canUseLane) {
-            lanes[laneIndex].push({ event, start: eventStart, end: eventEnd });
+          if (foundLane) {
+            lanes[laneIndex].push(event);
             event.lane = laneIndex;
-            break;
           }
-
-          laneIndex++;
         }
       });
-
-      return { totalLanes: lanes.length, eventHeights };
+      return lanes.length;
     };
 
-    const { totalLanes, eventHeights } = assignLanesAndHeights(sortedEvents);
+    assignLanes(sortedEvents);
 
     return (
       <div className="relative">
-        {/* Time indicators - Made responsive */}
-        <div className="absolute left-0 top-0 h-full w-12 sm:w-20 flex flex-col justify-between text-[10px] sm:text-xs text-white/40">
-          {[...Array(17)].map((_, i) => (
-            <div key={i} className="relative">
-              <div className="absolute -right-2 sm:-right-4 w-1 sm:w-2 h-px bg-white/10"></div>
-              {`${(i + 8).toString().padStart(2, '0')}:00`}
-            </div>
-          ))}
+        {/* Time indicators */}
+        <div className="absolute left-0 top-0 h-full w-14 xs:w-16 md:w-24 flex flex-col text-[10px] md:text-xs text-white/40">
+          {Array.from({ length: 19 }, (_, i) => {
+            const hour = (i + 8) % 24;
+            const position = (i / 18) * 100;
+            return (
+              <div 
+                key={i} 
+                className="absolute flex items-center"
+                style={{ 
+                  top: `${position}%`,
+                  transform: 'translateY(-50%)'
+                }}
+              >
+                <div className="w-14 xs:w-16 md:w-24 text-right pr-2 md:pr-4 opacity-60">
+                  {`${hour.toString().padStart(2, '0')}:00`}
+                </div>
+                <div className="w-2 h-px bg-white/10"></div>
+              </div>
+            );
+          })}
         </div>
 
-        {/* Events on timeline - Made responsive */}
+        {/* Timeline container */}
         <div 
           className={`
-            relative ml-16 sm:ml-24 h-[600px] sm:h-[800px] transition-opacity duration-300
+            relative ml-16 xs:ml-20 md:ml-28 h-[500px] xs:h-[600px] sm:h-[700px] md:h-[800px] 
+            transition-opacity duration-300
             ${isTransitioning ? 'opacity-0' : 'opacity-100'}
           `}
         >
-          <div className="absolute left-0 top-0 bottom-0 w-px bg-emerald-500/20" />
+          <div className="absolute inset-0 overflow-x-auto md:overflow-x-visible hide-scrollbar">
+            <div className="absolute min-w-[800px] w-full h-full pl-8 xs:pl-8 md:pl-8 pt-12">
+              {/* Vertical timeline line */}
+              <div className="absolute left-8 xs:left-8 md:left-8 top-12 bottom-0 w-px bg-emerald-500/20" />
 
-          {sortedEvents.map((event, index) => {
-            const topPosition = getExactTimePosition(event.time);
-            
-            return (
-              <div
-                key={index}
-                className="absolute w-full"
-                style={{
-                  top: `${topPosition}%`,
-                  transform: `translateY(-${event.verticalOffset || 0}rem)`
-                }}
-              >
-                {/* Event card - Made responsive */}
-                <div 
-                  className={`
-                    group relative ml-4 sm:ml-8
-                    transform transition-all duration-300
-                    hover:translate-x-1
-                  `}
-                  onMouseEnter={() => setHoveredEvent(event)}
-                  onMouseLeave={() => setHoveredEvent(null)}
-                >
-                  {/* Time marker */}
-                  <div className="absolute -left-4 sm:-left-8 top-1/2 -translate-y-1/2 flex items-center">
-                    <div className="w-2 sm:w-3 h-2 sm:h-3 rounded-full bg-emerald-500"></div>
-                    <div className="h-px w-2 sm:w-4 bg-emerald-500/50"></div>
-                  </div>
+              {/* Hour grid lines */}
+              <div className="absolute inset-0 -z-10 left-8 xs:left-8 md:left-8 top-12">
+                {Array.from({ length: 19 }, (_, i) => {
+                  const position = (i / 18) * 100;
+                  return (
+                    <div 
+                      key={i} 
+                      className="absolute w-full h-px bg-white/5"
+                      style={{ top: `${position}%` }}
+                    />
+                  );
+                })}
+              </div>
 
-                  {/* Event content */}
-                  <div 
-                    className={`
-                      relative inline-block max-w-[calc(100%-2rem)] sm:max-w-md
-                      p-3 sm:p-4 rounded-lg
-                      bg-white/5 hover:bg-white/10
-                      border border-white/10 hover:border-emerald-500/30
-                      transition-all duration-300
-                    `}
+              {/* Events */}
+              {sortedEvents.map((event, index) => {
+                const topPosition = getTimelinePosition(event.time);
+                const laneOffset = 8 + event.lane * (dimensions.width + dimensions.laneSpacing);
+                const markerWidth = dimensions.markerWidth + (event.lane * (dimensions.width + dimensions.laneSpacing));
+
+                return (
+                  <div
+                    key={index}
+                    className="absolute"
+                    style={{
+                      top: `calc(${topPosition}% + 48px)`,
+                      left: `${laneOffset}px`,
+                      width: `${dimensions.width}px`,
+                      transform: 'translateY(-50%)',
+                      zIndex: hoveredEvent === event ? 10 : 1
+                    }}
                   >
-                    <div className="flex items-start gap-3">
-                      {/* Icon - Made responsive */}
-                      <div className="w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
-                        <span className="text-base sm:text-xl">{event.icon}</span>
+                    {/* Event card */}
+                    <div 
+                      className={`
+                        group relative ml-4 xs:ml-6 md:ml-8
+                        transform transition-all duration-300
+                        hover:translate-x-1
+                      `}
+                      onMouseEnter={() => setHoveredEvent(event)}
+                      onMouseLeave={() => setHoveredEvent(null)}
+                    >
+                      {/* Time marker */}
+                      <div 
+                        className="absolute top-1/2 -translate-y-1/2 flex items-center"
+                        style={{
+                          width: `${markerWidth}px`,
+                          left: `-${markerWidth}px`
+                        }}
+                      >
+                        <div className="absolute left-0 w-2 md:w-3 h-2 md:h-3 rounded-full bg-emerald-500 relative">
+                          {/* Glowing effect */}
+                          <div className="absolute inset-0 bg-emerald-500/20 rounded-full blur-sm"></div>
+                        </div>
+                        <div className="h-px w-full bg-gradient-to-r from-emerald-500 via-emerald-500/80 to-emerald-500/50"></div>
                       </div>
 
-                      {/* Text content - Made responsive */}
-                      <div className="min-w-0 flex-1">
-                        <div className="font-medium text-sm sm:text-base text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
-                          {event.title}
-                        </div>
-                        <div className="mt-1 text-xs sm:text-sm text-white/60 line-clamp-2">
-                          {event.description}
-                        </div>
-                        <div className="mt-2 flex items-center gap-2 text-[10px] sm:text-xs text-white/40">
-                          <span>{event.time}</span>
-                          <span>•</span>
-                          <span>
-                            {Math.floor(event.duration / 60)}h
-                            {event.duration % 60 ? `${event.duration % 60}m` : ''}
-                          </span>
+                      {/* Event content */}
+                      <div 
+                        className={`
+                          p-2 xs:p-2.5 md:p-3 rounded-lg
+                          ${hoveredEvent === event 
+                            ? 'bg-white/10 border-emerald-500/30 shadow-lg shadow-emerald-500/10' 
+                            : 'bg-white/5 border-white/10'
+                          }
+                          border hover:border-emerald-500/30
+                          transition-all duration-300
+                          backdrop-blur-sm
+                          hover:shadow-xl hover:shadow-emerald-500/10
+                        `}
+                      >
+                        <div className="flex items-start gap-1.5 xs:gap-2">
+                          <div className="w-5 h-5 xs:w-6 xs:h-6 md:w-8 md:h-8 rounded-full bg-emerald-500/10 flex items-center justify-center flex-shrink-0">
+                            <span className="text-sm xs:text-base md:text-lg">{event.icon}</span>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <div className="font-medium text-[10px] xs:text-xs md:text-sm text-white group-hover:text-emerald-400 transition-colors line-clamp-1">
+                              {event.title}
+                            </div>
+                            <div className="mt-0.5 text-[8px] xs:text-[10px] md:text-xs text-white/60 line-clamp-2">
+                              {event.description}
+                            </div>
+                            <div className="mt-1 md:mt-1.5 flex items-center gap-1 md:gap-2 text-[8px] xs:text-[10px] md:text-xs text-white/40">
+                              <span>{event.time}</span>
+                              <span>•</span>
+                              <span>
+                                {Math.floor(event.duration / 60)}h
+                                {event.duration % 60 ? `${event.duration % 60}m` : ''}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
+                );
+              })}
+            </div>
+          </div>
 
-          {/* Hour grid lines */}
-          <div className="absolute inset-0 grid grid-cols-1 gap-[6.25%] -z-10">
-            {[...Array(16)].map((_, i) => (
-              <div key={i} className="border-l border-white/5" />
-            ))}
+          {/* Mobile scroll indicator */}
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 md:hidden animate-fade-in-up">
+            <div 
+              className="
+                px-4 py-2.5 rounded-full 
+                bg-gradient-to-r from-black/60 to-black/40 
+                backdrop-blur-md border border-emerald-500/30 
+                shadow-lg shadow-emerald-500/20
+                transform transition-all duration-500
+                hover:scale-105 hover:border-emerald-500/50
+              "
+            >
+              <div className="flex items-center gap-2.5">
+                <svg className="w-5 h-5 text-emerald-400/80" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+                <div className="flex items-center gap-2">
+                  <span className="text-emerald-400/90 text-sm font-medium">Swipe right to view all events</span>
+                  <div className="flex items-center">
+                    <span className="block w-2 h-2 rounded-full bg-emerald-500/60 animate-ping"></span>
+                    <span className="block w-2 h-2 rounded-full bg-emerald-500/60 animate-ping" style={{ animationDelay: '0.2s' }}></span>
+                    <span className="block w-2 h-2 rounded-full bg-emerald-500/60 animate-ping" style={{ animationDelay: '0.4s' }}></span>
+                  </div>
+                </div>
+                <svg className="w-5 h-5 text-emerald-400/80 animate-bounce-x" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -342,16 +446,16 @@ const Schedule = () => {
   );
 
   return (
-    <section id="schedule-section" className="py-16 sm:py-24 relative">
+    <section id="schedule-section" className="py-8 sm:py-16 md:py-24 relative">
       {/* Background */}
       <AnimatedSVG />
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-3 sm:px-4 lg:px-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 mb-12 sm:mb-16">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-6 mb-8 sm:mb-12 md:mb-16">
           <h2 
             className={`
-              text-3xl sm:text-4xl md:text-5xl font-bold
+              text-2xl sm:text-3xl md:text-5xl font-bold
               transform transition-all duration-1000
               ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}
             `}
@@ -366,11 +470,11 @@ const Schedule = () => {
           </h2>
 
           {/* View toggle */}
-          <div className="flex items-center gap-2 bg-black/20 rounded-lg p-1.5 backdrop-blur-sm border border-white/10">
+          <div className="flex items-center gap-1 sm:gap-2 bg-black/20 rounded-lg p-1 sm:p-1.5 backdrop-blur-sm border border-white/10">
             <button
               onClick={() => setViewMode('timeline')}
               className={`
-                px-4 py-2 rounded-md text-sm font-medium transition-all duration-300
+                px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all duration-300
                 ${viewMode === 'timeline' 
                   ? 'bg-emerald-500/20 text-emerald-400 shadow-lg shadow-emerald-500/10' 
                   : 'text-white/60 hover:text-white hover:bg-white/5'}
@@ -381,7 +485,7 @@ const Schedule = () => {
             <button
               onClick={() => setViewMode('calendar')}
               className={`
-                px-4 py-2 rounded-md text-sm font-medium transition-all duration-300
+                px-3 sm:px-4 py-1.5 sm:py-2 rounded-md text-xs sm:text-sm font-medium transition-all duration-300
                 ${viewMode === 'calendar' 
                   ? 'bg-emerald-500/20 text-emerald-400 shadow-lg shadow-emerald-500/10' 
                   : 'text-white/60 hover:text-white hover:bg-white/5'}
@@ -396,7 +500,7 @@ const Schedule = () => {
         {viewMode === 'timeline' && (
           <div 
             className={`
-              flex flex-wrap justify-center gap-3 sm:gap-4 mb-12
+              flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 mb-8 sm:mb-12
               transform transition-all duration-1000 delay-300
               ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}
             `}
@@ -406,16 +510,16 @@ const Schedule = () => {
                 key={index}
                 onClick={() => handleDayChange(index)}
                 className={`
-                  relative px-5 sm:px-6 py-2 sm:py-3 rounded-xl transition-all duration-300
+                  relative px-3 sm:px-5 md:px-6 py-1.5 sm:py-2 md:py-3 rounded-xl transition-all duration-300
                   ${activeDay === index 
                     ? 'bg-emerald-500/20 text-emerald-400' 
                     : 'hover:bg-white/5 text-white/60 hover:text-white'}
                 `}
               >
-                <div className="font-semibold text-sm sm:text-base">{day.day}</div>
-                <div className="text-xs sm:text-sm opacity-60">{day.date}</div>
+                <div className="font-semibold text-xs sm:text-sm md:text-base">{day.day}</div>
+                <div className="text-[10px] sm:text-xs md:text-sm opacity-60">{day.date}</div>
                 {activeDay === index && (
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-emerald-500 rounded-full"></div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 sm:w-12 h-0.5 sm:h-1 bg-emerald-500 rounded-full"></div>
                 )}
               </button>
             ))}
@@ -433,8 +537,8 @@ const Schedule = () => {
           {viewMode === 'timeline' ? renderTimeline() : renderCalendar()}
         </div>
 
-        {/* Event preview card */}
-        {previewEvent && (
+        {/* Event preview card - Hide on mobile */}
+        {previewEvent && isClient && window.innerWidth >= 768 && (
           <div 
             className={`
               fixed bottom-8 right-8 w-80 p-6 rounded-xl

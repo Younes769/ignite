@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import RegistrationModal from './RegistrationModal';
 
 const Hero = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [showRegistrationModal, setShowRegistrationModal] = useState(false);
 
   useEffect(() => {
     setIsVisible(true);
@@ -75,6 +77,7 @@ const Hero = () => {
         `}
       >
         <button 
+          onClick={() => setShowRegistrationModal(true)}
           className="group relative w-full sm:w-auto min-w-[200px] sm:min-w-[220px] hover:-translate-y-0.5 transition-all duration-300"
         >
           <span className="absolute inset-0 bg-emerald-500 rounded-xl blur-sm opacity-10 group-hover:opacity-20 transition-opacity"></span>
@@ -113,6 +116,11 @@ const Hero = () => {
           ${isVisible ? 'opacity-100' : 'opacity-0'}
         `}
       ></div>
+
+      <RegistrationModal 
+        isOpen={showRegistrationModal} 
+        onClose={() => setShowRegistrationModal(false)} 
+      />
     </div>
   );
 };

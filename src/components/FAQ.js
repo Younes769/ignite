@@ -1,75 +1,63 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 const faqs = [
   {
-    question: "What is a hackathon?",
-    answer: "A hackathon is an intensive event where innovators come together to solve challenges and build amazing projects in a limited time. It's about learning, collaborating, and creating something meaningful."
+    question: "What is DevImpact Hackathon?",
+    answer: "A 72-hour coding adventure where you'll turn caffeine into code and dreams into reality! It's like a marathon, but instead of running, you're typing... and instead of getting tired legs, you get tired eyes! 👀"
   },
   {
-    question: "Do I need to be an experienced programmer?",
-    answer: "Not at all! We welcome participants of all skill levels. What matters most is your enthusiasm to learn and create. We'll have mentors to guide you throughout the event."
+    question: "Why should I participate?",
+    answer: "Why did the programmer quit his job? Because he didn't get arrays! 😄 But seriously, you'll get to build amazing projects, network with fellow developers, and maybe win some cool prizes. Plus, free food! 🍕"
+  },
+  {
+    question: "Do I need to be an expert programmer?",
+    answer: "Not at all! Even a programmer who puts 'Hello World' on their resume is welcome! We welcome all skill levels, from 'I just learned what HTML stands for' to 'I debug in my sleep'. 💻"
   },
   {
     question: "What should I bring?",
-    answer: "Bring your laptop, charger, and any other devices you might need. We'll provide the workspace, internet, meals, and plenty of coffee to keep you going!"
+    answer: "Your laptop, charger, and enthusiasm! And maybe a rubber duck for debugging - it's like a therapist, but cheaper! 🦆"
   },
   {
-    question: "How are teams formed?",
-    answer: "You can form your own team of up to 4 members or join our team formation session where you'll meet other participants. We'll help you find the perfect team match!"
+    question: "How does team formation work?",
+    answer: "Why did the two functions stop calling each other? Because they had constant arguments! 😅 You can either form a team beforehand or find teammates during the event. Max team size is 4 members."
   },
   {
-    question: "What kind of projects can I build?",
-    answer: "You have the freedom to build any type of project that interests you - whether it's a web app, mobile app, game, or hardware hack. We encourage innovation and creativity!"
+    question: "What kind of projects can we build?",
+    answer: "Anything! From web apps to mobile apps, AI to IoT. Just remember: there are 10 types of projects in the world - those that work and those that don't! (Get it? Binary joke! 🤓)"
+  },
+  {
+    question: "Is there food provided?",
+    answer: "Yes! We'll keep you fueled with food and drinks. Because the only thing worse than a bug in your code is a hungry programmer! 🍔"
+  },
+  {
+    question: "What's the judging criteria?",
+    answer: "Projects will be judged on innovation, technical complexity, and impact. And no, 'It works on my machine' is not a valid defense! 😉"
+  },
+  {
+    question: "Will there be mentors?",
+    answer: "Yes! Our mentors are like Stack Overflow, but in real life - and they won't mark your question as duplicate! 🎓"
+  },
+  {
+    question: "How can I make the most of this event?",
+    answer: "Collaborate, network, and have fun! Meet fellow developers, share ideas. Remember: networking is just socializing with better variable names! 🤝"
   }
 ];
 
 const FAQ = () => {
-  const [activeIndex, setActiveIndex] = useState(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    const element = document.getElementById('faq-section');
-    if (element) observer.observe(element);
-
-    return () => {
-      if (element) observer.unobserve(element);
-    };
-  }, []);
-
-  const toggleQuestion = (index) => {
-    setActiveIndex(activeIndex === index ? null : index);
-  };
+  const [openIndex, setOpenIndex] = useState(null);
 
   return (
-    <section id="faq-section" className="py-24 relative">
-      {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_0%_0%,_rgba(16,185,129,0.05)_0%,_transparent_50%)]"></div>
-        <div className="absolute bottom-0 right-0 w-full h-full bg-[radial-gradient(circle_at_100%_100%,_rgba(16,185,129,0.05)_0%,_transparent_50%)]"></div>
-      </div>
-
-      <div className="max-w-4xl mx-auto px-4">
-        <h2 
-          className={`
-            text-4xl md:text-5xl font-bold text-center mb-16
-            transform transition-all duration-1000
-            ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}
-          `}
-        >
-          <span className="text-white">Common </span>
-          <span className="bg-gradient-to-r from-emerald-400 to-emerald-300 inline-block text-transparent bg-clip-text">
-            Questions
+    <section className="py-16 sm:py-24">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
+          <span className="text-white">Frequently Asked </span>
+          <span className="relative inline-block">
+            <span className="absolute -inset-1 bg-emerald-500/20 blur-xl rounded-full"></span>
+            <span className="relative bg-gradient-to-r from-emerald-400 to-emerald-300 text-transparent bg-clip-text">
+              Questions
+            </span>
           </span>
         </h2>
 
@@ -77,56 +65,51 @@ const FAQ = () => {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className={`
-                transform transition-all duration-1000 delay-${index * 100}
-                ${isVisible ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}
-              `}
+              className="relative group"
             >
-              <button
-                onClick={() => toggleQuestion(index)}
-                className="w-full group"
-              >
-                <div className="relative p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm transition-all duration-300 hover:bg-white/10">
-                  {/* Question */}
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-white pr-8">{faq.question}</h3>
-                    <div 
-                      className={`
-                        w-6 h-6 rounded-full border-2 border-emerald-500/50 flex items-center justify-center
-                        transition-transform duration-300
-                        ${activeIndex === index ? 'rotate-180 bg-emerald-500/20' : ''}
-                      `}
-                    >
-                      <svg 
-                        className="w-4 h-4 text-emerald-400" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                      >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M19 9l-7 7-7-7" 
-                        />
-                      </svg>
-                    </div>
-                  </div>
-
-                  {/* Answer */}
-                  <div 
-                    className={`
-                      overflow-hidden transition-all duration-300 ease-in-out
-                      ${activeIndex === index ? 'max-h-48 mt-4' : 'max-h-0'}
-                    `}
+              {/* Background glow effect */}
+              <div 
+                className={`
+                  absolute -inset-px bg-gradient-to-r from-emerald-500/20 to-emerald-500/0 
+                  rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300
+                  ${openIndex === index ? 'opacity-100' : ''}
+                `}
+              />
+              
+              {/* FAQ Item */}
+              <div className="relative bg-white/5 rounded-xl backdrop-blur-sm border border-white/10 overflow-hidden">
+                <button
+                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  className="w-full px-6 py-4 text-left flex items-center justify-between"
+                >
+                  <span className="text-white font-medium">{faq.question}</span>
+                  <svg
+                    className={`w-5 h-5 text-white/60 transform transition-transform duration-200 ${
+                      openIndex === index ? 'rotate-180' : ''
+                    }`}
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
                   >
-                    <p className="text-white/60">{faq.answer}</p>
-                  </div>
-
-                  {/* Hover effect */}
-                  <div className="absolute inset-0 bg-emerald-500/5 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
+                </button>
+                
+                {/* Answer */}
+                <div
+                  className={`
+                    px-6 overflow-hidden transition-all duration-300 ease-in-out
+                    ${openIndex === index ? 'max-h-96 pb-4' : 'max-h-0'}
+                  `}
+                >
+                  <p className="text-white/60">{faq.answer}</p>
                 </div>
-              </button>
+              </div>
             </div>
           ))}
         </div>

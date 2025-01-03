@@ -48,7 +48,8 @@ const LoadingScreen = () => {
               alt="DevIM Logo"
               width={100}
               height={100}
-              className="object-contain"
+              priority
+              className="object-contain w-[100px] h-[100px]"
             />
           </div>
 

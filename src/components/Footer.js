@@ -54,7 +54,7 @@ const Footer = () => {
                 width={32}
                 height={32}
                 sizes="32px"
-                className="relative w-full h-auto"
+                className="relative w-[32px] h-[32px]"
               />
             </div>
             <span className="font-bold text-xl bg-gradient-to-r from-emerald-400 to-emerald-200 inline-block text-transparent bg-clip-text">

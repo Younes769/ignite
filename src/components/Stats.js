@@ -1,8 +1,8 @@
 const stats = [
-  { number: "72h", label: "Non-stop Innovation" },
-  { number: "0", label: "Innovators" },
-  { number: "15", label: "Mentors" },
-  { number: "0", label: "Industry Partners" }
+  { number: "+60", label: "Participants" },
+  { number: "72", label: "Hours of Innovation" },
+  { number: "15+", label: "Teams" },
+  { number: "10+", label: "Mentors" }
 ];
 
 const Stats = () => {
