@@ -367,7 +367,7 @@ const Schedule = () => {
                 key={i}
                 className="absolute flex items-center"
                 style={{
-                  top: `${position}%`,
+                  top: `calc(${position}% + 48px)`,
                   transform: "translateY(-50%)",
                 }}
               >
