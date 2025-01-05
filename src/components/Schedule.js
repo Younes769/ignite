@@ -52,8 +52,8 @@ const events = [
         time: "19:00",
         title: "Dinner Time",
         description:
-          "Time to refuel and recharge! Let's hope the food is better than the code we've been writing all day 😊",
-        icon: "🍴",
+          "Time to rest those typing fingers and feed that big brain of yours.",
+        icon: "🍕",
         duration: 60,
       },
       {
