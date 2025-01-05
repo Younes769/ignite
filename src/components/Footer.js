@@ -80,7 +80,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <div className="text-sm text-white/40">
-            © 2024 NCS Club. All rights reserved.
+            © 2025 NCS Club. All rights reserved.
           </div>
         </div>
       </div>

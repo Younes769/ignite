@@ -157,11 +157,6 @@ const RegistrationModal = ({ isOpen, onClose }) => {
 
       if (response.ok) {
         setSubmitStatus("success");
-        setTimeout(() => {
-          onClose();
-          setSubmitStatus(null);
-          setShowReview(false);
-        }, 2000);
       } else {
         throw new Error("Submission failed");
       }
@@ -201,27 +196,37 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     <div className="px-6 py-4 bg-black/40 border-t border-white/10 flex justify-between">
       <button
         type="button"
-        onClick={() => setStep((prev) => Math.max(1, prev - 1))}
+        onClick={() => {
+          if (showReview) {
+            setShowReview(false);
+          } else {
+            setStep((prev) => Math.max(1, prev - 1));
+          }
+        }}
         className={`
           px-4 py-2 rounded-lg text-sm font-medium
           ${
-            step === 1
+            step === 1 && !showReview
               ? "text-white/40 cursor-not-allowed"
               : "text-white hover:bg-white/5"
           }
           transition-colors
         `}
-        disabled={step === 1 || isSubmitting}
+        disabled={(step === 1 && !showReview) || isSubmitting}
       >
         Previous
       </button>
       <button
         type="submit"
-        disabled={isSubmitting}
+        disabled={isSubmitting || submitStatus === "success"}
         className={`
           px-6 py-2 bg-emerald-500/90 hover:bg-emerald-500 text-white text-sm font-medium 
           rounded-lg transition-all flex items-center gap-2
-          ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""}
+          ${
+            isSubmitting || submitStatus === "success"
+              ? "opacity-75 cursor-not-allowed"
+              : ""
+          }
         `}
       >
         {isSubmitting ? (
@@ -245,7 +250,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
             <span>Submitting...</span>
           </>
         ) : (
-          <span>{step === 4 ? "Submit" : "Next"}</span>
+          <span>{showReview ? "Submit" : "Next"}</span>
         )}
       </button>
     </div>
@@ -465,9 +470,6 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                     </option>
                     <option value="no" className="text-white">
                       No, I want to join a team
-                    </option>
-                    <option value="form" className="text-white">
-                      No, I want to form a new team
                     </option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">

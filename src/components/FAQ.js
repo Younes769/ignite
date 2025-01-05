@@ -25,11 +25,11 @@ const faqs = [
   },
   {
     question: "What kind of projects can we build?",
-    answer: "Anything! From web apps to mobile apps, AI to IoT. Just remember: there are 10 types of projects in the world - those that work and those that don't! (Get it? Binary joke! 🤓)"
+    answer: "Anything! From web apps to mobile apps to AI and more. Just remember: there are 10 types of projects in the world - those that work and those that don't! (Get it? Binary joke! 🤓)"
   },
   {
     question: "Is there food provided?",
-    answer: "Yes! We'll keep you fueled with food and drinks. Because the only thing worse than a bug in your code is a hungry programmer! 🍔"
+    answer: "Yes! We'll keep you fueled with food and drinks. After all, a programmer's stomach is like a stack - it's always pushing for more! 🍔"
   },
   {
     question: "What's the judging criteria?",
@@ -37,7 +37,7 @@ const faqs = [
   },
   {
     question: "Will there be mentors?",
-    answer: "Yes! Our mentors are like Stack Overflow, but in real life - and they won't mark your question as duplicate! 🎓"
+    answer: "Yes! Our mentors are like a guide for your project - they'll help you navigate through challenges and ensure you're on the right track! 🧐"
   },
   {
     question: "How can I make the most of this event?",
