@@ -1,107 +1,111 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 const RegistrationModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState(null); // 'success' | 'error' | null
+  const [showReview, setShowReview] = useState(false);
   const [formData, setFormData] = useState({
     // Personal Info
-    fullName: '',
-    email: '',
-    yearOfStudy: '',
-    
+    fullName: "",
+    email: "",
+    yearOfStudy: "",
+
     // Team Info
-    hasTeam: '',
-    teamName: '',
-    teamMember1: '',
-    teamMember2: '',
-    teamMember3: '',
-    
+    hasTeam: "",
+    teamName: "",
+    teamMember1: "",
+    teamMember2: "",
+    teamMember3: "",
+
     // Technical Background
-    experience: '',
+    experience: "",
     skills: [],
-    otherSkills: '',
-    
+    otherSkills: "",
+
     // Additional Info
-    additionalNotes: ''
+    additionalNotes: "",
   });
 
-  const yearOptions = ['L1', 'L2', 'L3'];
+  const yearOptions = ["L1", "L2", "L3"];
   const skillOptions = [
-    'Web Development',
-    'Mobile Development',
-    'AI/Machine Learning',
-    'UI/UX Design',
-    'Backend Development',
-    'Database Management',
-    'Cloud Computing',
-    'DevOps',
-    'Game Development',
-    'Cybersecurity',
-    'Other'
+    "Frontend Development",
+    "Backend Development",
+    "UI/UX Design",
+    "AI/Machine Learning",
+    "Database Management",
   ];
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = "unset";
     };
   }, [isOpen]);
 
   const handleChange = (e) => {
     const { name, value, type } = e.target;
-    if (type === 'checkbox') {
+    if (type === "checkbox") {
       const checked = e.target.checked;
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        skills: checked 
+        skills: checked
           ? [...prev.skills, value]
-          : prev.skills.filter(skill => skill !== value)
+          : prev.skills.filter((skill) => skill !== value),
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
 
   const validateStep = (stepNumber) => {
     const newErrors = {};
-    
-    switch(stepNumber) {
+
+    switch (stepNumber) {
       case 1:
-        if (!formData.fullName.trim()) newErrors.fullName = 'Name is required';
-        if (!formData.email.trim()) newErrors.email = 'Email is required';
+        if (!formData.fullName.trim()) newErrors.fullName = "Name is required";
+        if (!formData.email.trim()) newErrors.email = "Email is required";
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-          newErrors.email = 'Please enter a valid email';
+          newErrors.email = "Please enter a valid email";
         }
-        if (!formData.yearOfStudy) newErrors.yearOfStudy = 'Please select your year of study';
+        if (!formData.yearOfStudy)
+          newErrors.yearOfStudy = "Please select your year of study";
         break;
       case 2:
-        if (!formData.hasTeam) newErrors.hasTeam = 'Please select an option';
-        if (formData.hasTeam === 'yes') {
-          if (!formData.teamName.trim()) newErrors.teamName = 'Team name is required';
-          if (!formData.teamMember1.trim() && !formData.teamMember2.trim() && !formData.teamMember3.trim()) {
-            newErrors.teamMembers = 'Please add at least one team member';
+        if (!formData.hasTeam) newErrors.hasTeam = "Please select an option";
+        if (formData.hasTeam === "yes") {
+          if (!formData.teamName.trim())
+            newErrors.teamName = "Team name is required";
+          if (
+            !formData.teamMember1.trim() &&
+            !formData.teamMember2.trim() &&
+            !formData.teamMember3.trim()
+          ) {
+            newErrors.teamMembers = "Please add at least one team member";
           }
         }
         break;
       case 3:
-        if (!formData.experience) newErrors.experience = 'Please select your experience level';
-        if (formData.skills.length === 0) newErrors.skills = 'Please select at least one skill';
-        if (formData.skills.includes('Other') && !formData.otherSkills.trim()) {
-          newErrors.otherSkills = 'Please specify your other skills';
+        if (!formData.experience)
+          newErrors.experience = "Please select your experience level";
+        if (formData.skills.length === 0)
+          newErrors.skills = "Please select at least one skill";
+        if (formData.skills.includes("Other") && !formData.otherSkills.trim()) {
+          newErrors.otherSkills = "Please specify your other skills";
         }
         break;
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -109,32 +113,72 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!validateStep(step)) return;
-    
+
     if (step < 4) {
-      setStep(prev => prev + 1);
+      setStep((prev) => prev + 1);
+      return;
+    }
+
+    // Show review before submitting
+    if (!showReview) {
+      setShowReview(true);
       return;
     }
 
     setIsSubmitting(true);
     try {
-      // Here you would typically send the data to your backend
-      console.log('Form submitted:', formData);
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      onClose();
+      const skillsString = formData.skills.join(", ");
+
+      const formDataToSend = {
+        fullName: formData.fullName,
+        email: formData.email,
+        yearOfStudy: formData.yearOfStudy,
+        teamStatus: formData.hasTeam,
+        teamName: formData.teamName || "N/A",
+        teamMembers:
+          [formData.teamMember1, formData.teamMember2, formData.teamMember3]
+            .filter(Boolean)
+            .join(", ") || "N/A",
+        experience: formData.experience,
+        skills: skillsString,
+        otherSkills: formData.otherSkills || "N/A",
+        additionalNotes: formData.additionalNotes || "N/A",
+        submittedAt: new Date().toISOString(),
+      };
+
+      const response = await fetch("https://submit-form.com/nUuCIzQIi", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(formDataToSend),
+      });
+
+      if (response.ok) {
+        setSubmitStatus("success");
+        setTimeout(() => {
+          onClose();
+          setSubmitStatus(null);
+          setShowReview(false);
+        }, 2000);
+      } else {
+        throw new Error("Submission failed");
+      }
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error("Submission error:", error);
+      setSubmitStatus("error");
+      setTimeout(() => setSubmitStatus(null), 3000);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const ErrorMessage = ({ error }) => error ? (
-    <p className="text-red-400 text-xs mt-1 ml-1">{error}</p>
-  ) : null;
+  const ErrorMessage = ({ error }) =>
+    error ? <p className="text-red-400 text-xs mt-1 ml-1">{error}</p> : null;
 
   const inputClasses = (error) => `
-    w-full bg-white/5 border ${error ? 'border-red-500/50' : 'border-white/10'} 
+    w-full bg-white/5 border ${error ? "border-red-500/50" : "border-white/10"} 
     rounded-lg px-4 py-2.5 text-white 
     focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/50 
     transition-all
@@ -157,12 +201,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     <div className="px-6 py-4 bg-black/40 border-t border-white/10 flex justify-between">
       <button
         type="button"
-        onClick={() => setStep(prev => Math.max(1, prev - 1))}
+        onClick={() => setStep((prev) => Math.max(1, prev - 1))}
         className={`
           px-4 py-2 rounded-lg text-sm font-medium
-          ${step === 1 
-            ? 'text-white/40 cursor-not-allowed' 
-            : 'text-white hover:bg-white/5'}
+          ${
+            step === 1
+              ? "text-white/40 cursor-not-allowed"
+              : "text-white hover:bg-white/5"
+          }
           transition-colors
         `}
         disabled={step === 1 || isSubmitting}
@@ -175,33 +221,155 @@ const RegistrationModal = ({ isOpen, onClose }) => {
         className={`
           px-6 py-2 bg-emerald-500/90 hover:bg-emerald-500 text-white text-sm font-medium 
           rounded-lg transition-all flex items-center gap-2
-          ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''}
+          ${isSubmitting ? "opacity-75 cursor-not-allowed" : ""}
         `}
       >
         {isSubmitting ? (
           <>
             <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+              <circle
+                className="opacity-25"
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="4"
+                fill="none"
+              />
+              <path
+                className="opacity-75"
+                fill="currentColor"
+                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+              />
             </svg>
             <span>Submitting...</span>
           </>
         ) : (
-          <span>{step === 4 ? 'Submit' : 'Next'}</span>
+          <span>{step === 4 ? "Submit" : "Next"}</span>
         )}
       </button>
     </div>
   );
 
+  const renderReview = () => (
+    <div className="space-y-6">
+      <h3 className="text-lg font-semibold text-white">
+        Review Your Information
+      </h3>
+      <div className="space-y-4">
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h4 className="text-sm font-medium text-white/60">
+              Personal Information
+            </h4>
+            <div className="mt-2 space-y-1">
+              <p className="text-white">{formData.fullName}</p>
+              <p className="text-white">{formData.email}</p>
+              <p className="text-white">{formData.yearOfStudy}</p>
+            </div>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-white/60">Team Status</h4>
+            <div className="mt-2 space-y-1">
+              <p className="text-white">
+                {formData.hasTeam === "yes"
+                  ? "Has Team"
+                  : formData.hasTeam === "no"
+                  ? "Looking for Team"
+                  : "Want to Form Team"}
+              </p>
+              {formData.hasTeam === "yes" && (
+                <>
+                  <p className="text-white">Team: {formData.teamName}</p>
+                  {[
+                    formData.teamMember1,
+                    formData.teamMember2,
+                    formData.teamMember3,
+                  ]
+                    .filter(Boolean)
+                    .map((member, i) => (
+                      <p key={i} className="text-white">
+                        {member}
+                      </p>
+                    ))}
+                </>
+              )}
+            </div>
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-white/60">
+              Technical Background
+            </h4>
+            <div className="mt-2 space-y-1">
+              <p className="text-white">Experience: {formData.experience}</p>
+              <p className="text-white">Skills: {formData.skills.join(", ")}</p>
+              {formData.skills.includes("Other") && (
+                <p className="text-white">
+                  Other Skills: {formData.otherSkills}
+                </p>
+              )}
+            </div>
+          </div>
+          {formData.additionalNotes && (
+            <div>
+              <h4 className="text-sm font-medium text-white/60">
+                Additional Notes
+              </h4>
+              <p className="mt-2 text-white">{formData.additionalNotes}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   const renderStep = () => {
-    switch(step) {
+    if (submitStatus === "success") {
+      return (
+        <div className="space-y-6 text-center py-8">
+          <div className="flex justify-center">
+            <div className="rounded-full bg-emerald-500/20 p-3">
+              <svg
+                className="w-8 h-8 text-emerald-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+            </div>
+          </div>
+          <h3 className="text-xl font-semibold text-white">
+            Registration Successful!
+          </h3>
+          <p className="text-white/60">
+            Thank you for registering for DevImpact. We'll be in touch soon!
+          </p>
+        </div>
+      );
+    }
+
+    if (showReview) {
+      return renderReview();
+    }
+
+    switch (step) {
       case 1:
         return (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Personal Information</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Personal Information
+            </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Full Name</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Full Name
+                </label>
                 <input
                   type="text"
                   name="fullName"
@@ -214,7 +382,9 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                 <ErrorMessage error={errors.fullName} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Email</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Email
+                </label>
                 <input
                   type="email"
                   name="email"
@@ -227,7 +397,9 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                 <ErrorMessage error={errors.email} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Year of Study</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Year of Study
+                </label>
                 <div className="relative">
                   <select
                     name="yearOfStudy"
@@ -236,14 +408,28 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                     className={selectClasses(errors.yearOfStudy)}
                     required
                   >
-                    <option value="" className="text-white/60">Select year</option>
-                    {yearOptions.map(year => (
-                      <option key={year} value={year} className="text-white">{year}</option>
+                    <option value="" className="text-white/60">
+                      Select year
+                    </option>
+                    {yearOptions.map((year) => (
+                      <option key={year} value={year} className="text-white">
+                        {year}
+                      </option>
                     ))}
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-5 h-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-5 h-5 text-white/40"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
@@ -255,10 +441,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       case 2:
         return (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Team Information</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Team Information
+            </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Do you have a team?</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Do you have a team?
+                </label>
                 <div className="relative">
                   <select
                     name="hasTeam"
@@ -267,23 +457,43 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                     className={selectClasses(errors.hasTeam)}
                     required
                   >
-                    <option value="" className="text-white/60">Select option</option>
-                    <option value="yes" className="text-white">Yes, I have a team</option>
-                    <option value="no" className="text-white">No, I want to join a team</option>
-                    <option value="form" className="text-white">No, I want to form a new team</option>
+                    <option value="" className="text-white/60">
+                      Select option
+                    </option>
+                    <option value="yes" className="text-white">
+                      Yes, I have a team
+                    </option>
+                    <option value="no" className="text-white">
+                      No, I want to join a team
+                    </option>
+                    <option value="form" className="text-white">
+                      No, I want to form a new team
+                    </option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-5 h-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-5 h-5 text-white/40"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
                 <ErrorMessage error={errors.hasTeam} />
               </div>
-              {formData.hasTeam === 'yes' && (
+              {formData.hasTeam === "yes" && (
                 <>
                   <div>
-                    <label className="block text-sm font-medium text-white/60 mb-1">Team Name</label>
+                    <label className="block text-sm font-medium text-white/60 mb-1">
+                      Team Name
+                    </label>
                     <input
                       type="text"
                       name="teamName"
@@ -296,7 +506,9 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                     <ErrorMessage error={errors.teamName} />
                   </div>
                   <div className="space-y-3">
-                    <label className="block text-sm font-medium text-white/60">Team Members</label>
+                    <label className="block text-sm font-medium text-white/60">
+                      Team Members
+                    </label>
                     <input
                       type="text"
                       name="teamMember1"
@@ -331,10 +543,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       case 3:
         return (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Technical Background</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Technical Background
+            </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Programming Experience</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Programming Experience
+                </label>
                 <div className="relative">
                   <select
                     name="experience"
@@ -343,24 +559,47 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                     className={selectClasses(errors.experience)}
                     required
                   >
-                    <option value="" className="text-white/60">Select experience</option>
-                    <option value="beginner" className="text-white">Beginner ({"<"} 1 year)</option>
-                    <option value="intermediate" className="text-white">Intermediate (1-2 years)</option>
-                    <option value="advanced" className="text-white">Advanced (2+ years)</option>
+                    <option value="" className="text-white/60">
+                      Select experience
+                    </option>
+                    <option value="beginner" className="text-white">
+                      Beginner ({"<"} 1 year)
+                    </option>
+                    <option value="intermediate" className="text-white">
+                      Intermediate (1-2 years)
+                    </option>
+                    <option value="advanced" className="text-white">
+                      Advanced (2+ years)
+                    </option>
                   </select>
                   <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg className="w-5 h-5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    <svg
+                      className="w-5 h-5 text-white/40"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
                     </svg>
                   </div>
                 </div>
                 <ErrorMessage error={errors.experience} />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Skills (Select all that apply)</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Skills (Select all that apply)
+                </label>
                 <div className="grid grid-cols-2 gap-3 mt-2">
-                  {skillOptions.map(skill => (
-                    <label key={skill} className="flex items-center space-x-2 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group">
+                  {skillOptions.map((skill) => (
+                    <label
+                      key={skill}
+                      className="flex items-center space-x-2 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group"
+                    >
                       <input
                         type="checkbox"
                         name="skills"
@@ -369,15 +608,19 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                         onChange={handleChange}
                         className="rounded border-white/10 bg-white/5 text-emerald-500 focus:ring-emerald-500/50"
                       />
-                      <span className="text-sm text-white/80 group-hover:text-white transition-colors">{skill}</span>
+                      <span className="text-sm text-white/80 group-hover:text-white transition-colors">
+                        {skill}
+                      </span>
                     </label>
                   ))}
                 </div>
                 <ErrorMessage error={errors.skills} />
               </div>
-              {formData.skills.includes('Other') && (
+              {formData.skills.includes("Other") && (
                 <div>
-                  <label className="block text-sm font-medium text-white/60 mb-1">Other Skills</label>
+                  <label className="block text-sm font-medium text-white/60 mb-1">
+                    Other Skills
+                  </label>
                   <input
                     type="text"
                     name="otherSkills"
@@ -396,10 +639,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       case 4:
         return (
           <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">Additional Information</h3>
+            <h3 className="text-lg font-semibold text-white">
+              Additional Information
+            </h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">Additional Notes</label>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Additional Notes
+                </label>
                 <textarea
                   name="additionalNotes"
                   value={formData.additionalNotes}
@@ -417,34 +664,50 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     }
   };
 
+  // Remove the floating notification
+  const renderNotification = () => null;
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {renderNotification()}
       {/* Backdrop */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/80 backdrop-blur-sm"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="relative w-full max-w-2xl bg-black/40 rounded-2xl overflow-hidden border border-emerald-500/20 shadow-2xl">
         {/* Header */}
         <div className="px-6 py-4 border-b border-white/10">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-white">Join the Challenge</h2>
+            <h2 className="text-xl font-semibold text-white">
+              Join the Challenge
+            </h2>
             <button
               onClick={onClose}
               className="p-2 rounded-full hover:bg-white/5 text-white/60 hover:text-white transition-colors"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
           {/* Progress bar */}
           <div className="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
-            <div 
+            <div
               className="h-full bg-emerald-500 transition-all duration-300"
               style={{ width: `${(step / 4) * 100}%` }}
             />
@@ -465,4 +728,4 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   );
 };
 
-export default RegistrationModal; 
+export default RegistrationModal;
