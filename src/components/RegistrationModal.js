@@ -13,6 +13,8 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     fullName: "",
     email: "",
     yearOfStudy: "",
+    needsBus: "",
+    busLocation: "",
 
     // Team Info
     hasTeam: "",
@@ -80,6 +82,10 @@ const RegistrationModal = ({ isOpen, onClose }) => {
         }
         if (!formData.yearOfStudy)
           newErrors.yearOfStudy = "Please select your year of study";
+        if (!formData.needsBus)
+          newErrors.needsBus = "Please select if you need bus transportation";
+        if (formData.needsBus === "yes" && !formData.busLocation.trim())
+          newErrors.busLocation = "Please enter your pickup location";
         break;
       case 2:
         if (!formData.hasTeam) newErrors.hasTeam = "Please select an option";
@@ -133,6 +139,8 @@ const RegistrationModal = ({ isOpen, onClose }) => {
         fullName: formData.fullName,
         email: formData.email,
         yearOfStudy: formData.yearOfStudy,
+        needsBus: formData.needsBus,
+        busLocation: formData.needsBus === "yes" ? formData.busLocation : "N/A",
         teamStatus: formData.hasTeam,
         teamName: formData.teamName || "N/A",
         teamMembers:
@@ -146,7 +154,7 @@ const RegistrationModal = ({ isOpen, onClose }) => {
         submittedAt: new Date().toISOString(),
       };
 
-      const response = await fetch("https://submit-form.com/nUuCIzQIi", {
+      const response = await fetch("https://submit-form.com/QHYAYBRer", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -271,6 +279,14 @@ const RegistrationModal = ({ isOpen, onClose }) => {
               <p className="text-white">{formData.fullName}</p>
               <p className="text-white">{formData.email}</p>
               <p className="text-white">{formData.yearOfStudy}</p>
+              <p className="text-white">
+                Bus Transportation: {formData.needsBus === "yes" ? "Yes" : "No"}
+              </p>
+              {formData.needsBus === "yes" && (
+                <p className="text-white">
+                  Pickup Location: {formData.busLocation}
+                </p>
+              )}
             </div>
           </div>
           <div>
@@ -440,6 +456,63 @@ const RegistrationModal = ({ isOpen, onClose }) => {
                 </div>
                 <ErrorMessage error={errors.yearOfStudy} />
               </div>
+              <div>
+                <label className="block text-sm font-medium text-white/60 mb-1">
+                  Do you need NIT bus transportation?
+                </label>
+                <div className="relative">
+                  <select
+                    name="needsBus"
+                    value={formData.needsBus}
+                    onChange={handleChange}
+                    className={selectClasses(errors.needsBus)}
+                    required
+                  >
+                    <option value="" className="text-white/60">
+                      Select option
+                    </option>
+                    <option value="yes" className="text-white">
+                      Yes, I need bus transportation
+                    </option>
+                    <option value="no" className="text-white">
+                      No, I'll arrange my own transportation
+                    </option>
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <svg
+                      className="w-5 h-5 text-white/40"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <ErrorMessage error={errors.needsBus} />
+              </div>
+              {formData.needsBus === "yes" && (
+                <div>
+                  <label className="block text-sm font-medium text-white/60 mb-1">
+                    Pickup Location
+                  </label>
+                  <input
+                    type="text"
+                    name="busLocation"
+                    value={formData.busLocation}
+                    onChange={handleChange}
+                    className={inputClasses(errors.busLocation)}
+                    placeholder="Enter your preferred pickup location"
+                    required
+                  />
+                  <ErrorMessage error={errors.busLocation} />
+                </div>
+              )}
             </div>
           </div>
         );

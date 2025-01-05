@@ -121,8 +121,8 @@ The site is automatically deployed to Vercel on every push to the main branch.
 
 ## 📞 Contact
 
-For any questions or feedback, please reach out to [your-email@example.com](mailto:your-email@example.com)
+For any questions or feedback, please reach out to [younesharhour71@gmail.com](mailto:younesharhour71@gmail.com)
 
 ---
 
-Made with ❤️ by [Your Name/Team]
+Made with ❤️ by [Harhour younes]
