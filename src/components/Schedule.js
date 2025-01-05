@@ -52,7 +52,7 @@ const events = [
         time: "19:00",
         title: "Dinner Time",
         description:
-          "Time to rest those typing fingers and feed that big brain of yours. Pizza: The official fuel of programmers 🍕",
+          "Time to rest those typing fingers and feed that big brain of yours.",
         icon: "🍕",
         duration: 60,
       },
