@@ -52,6 +52,18 @@ const RegistrationModal = ({ isOpen, onClose }) => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    // Add Pageclip script
+    const script = document.createElement("script");
+    script.src = "https://s.pageclip.co/v1/pageclip.js";
+    script.charset = "utf-8";
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
   const handleChange = (e) => {
     const { name, value, type } = e.target;
     if (type === "checkbox") {
@@ -154,20 +166,28 @@ const RegistrationModal = ({ isOpen, onClose }) => {
         submittedAt: new Date().toISOString(),
       };
 
-      const response = await fetch("https://submit-form.com/QHYAYBRer", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify(formDataToSend),
+      // Use Pageclip's client library
+      const Pageclip = window.Pageclip;
+      if (!Pageclip) {
+        throw new Error("Pageclip library not loaded");
+      }
+
+      await new Promise((resolve, reject) => {
+        Pageclip.send(
+          "2Vcs3gyKFYmUV8zVKT4CppKxGn18NVdb",
+          "devimpact",
+          formDataToSend,
+          (error, response) => {
+            if (error) {
+              reject(error);
+            } else {
+              resolve(response);
+            }
+          }
+        );
       });
 
-      if (response.ok) {
-        setSubmitStatus("success");
-      } else {
-        throw new Error("Submission failed");
-      }
+      setSubmitStatus("success");
     } catch (error) {
       console.error("Submission error:", error);
       setSubmitStatus("error");
