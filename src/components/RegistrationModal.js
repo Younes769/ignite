@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 const RegistrationModal = ({ isOpen, onClose }) => {
   const [step, setStep] = useState(1);
@@ -365,398 +366,77 @@ const RegistrationModal = ({ isOpen, onClose }) => {
   );
 
   const renderStep = () => {
-    if (submitStatus === "success") {
-      return (
-        <div className="space-y-6 text-center py-8">
-          <div className="flex justify-center">
-            <div className="rounded-full bg-emerald-500/20 p-3">
-              <svg
-                className="w-8 h-8 text-emerald-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+    return (
+      <div className="relative overflow-hidden">
+        {/* Main content container */}
+        <div className="relative z-10">
+          <div className="flex flex-col items-center">
+            {/* Logo and Icon Combined */}
+            <div className="relative mb-6">
+              <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/40 to-black/0"></div>
+              <Image
+                src="/logo.png"
+                alt="Logo"
+                width={180}
+                height={60}
+                className="object-contain opacity-20"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="rounded-full bg-emerald-500/10 p-4 backdrop-blur-sm border border-emerald-500/20">
+                  <svg
+                    className="w-12 h-12 text-emerald-500"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 12l4 4m0-4l-4 4"
+                      className="text-red-500"
+                    />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Text content */}
+            <div className="text-center space-y-4">
+              <h3 className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-emerald-300 to-emerald-400">
+                Registration Period Has Ended
+              </h3>
+              <p className="text-white/70 max-w-md mx-auto">
+                The journey begins soon! While registrations are closed, the
+                excitement is just beginning.
+              </p>
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500/10 text-emerald-300 text-sm">
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+                <span>January 9-11, 2025</span>
+              </div>
             </div>
           </div>
-          <h3 className="text-xl font-semibold text-white">
-            Registration Successful!
-          </h3>
-          <p className="text-white/60">
-            Thank you for registering for DevImpact. We'll be in touch soon!
-          </p>
         </div>
-      );
-    }
-
-    if (showReview) {
-      return renderReview();
-    }
-
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">
-              Personal Information
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  name="fullName"
-                  value={formData.fullName}
-                  onChange={handleChange}
-                  className={inputClasses(errors.fullName)}
-                  placeholder="Enter your full name"
-                  required
-                />
-                <ErrorMessage error={errors.fullName} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="your.email@mail.com"
-                  className={inputClasses(errors.email)}
-                  required
-                />
-                <ErrorMessage error={errors.email} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Year of Study
-                </label>
-                <div className="relative">
-                  <select
-                    name="yearOfStudy"
-                    value={formData.yearOfStudy}
-                    onChange={handleChange}
-                    className={selectClasses(errors.yearOfStudy)}
-                    required
-                  >
-                    <option value="" className="text-white/60">
-                      Select year
-                    </option>
-                    {yearOptions.map((year) => (
-                      <option key={year} value={year} className="text-white">
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-white/40"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <ErrorMessage error={errors.yearOfStudy} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Do you need NIT bus transportation?
-                </label>
-                <div className="relative">
-                  <select
-                    name="needsBus"
-                    value={formData.needsBus}
-                    onChange={handleChange}
-                    className={selectClasses(errors.needsBus)}
-                    required
-                  >
-                    <option value="" className="text-white/60">
-                      Select option
-                    </option>
-                    <option value="yes" className="text-white">
-                      Yes, I need bus transportation
-                    </option>
-                    <option value="no" className="text-white">
-                      No, I'll arrange my own transportation
-                    </option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-white/40"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <ErrorMessage error={errors.needsBus} />
-              </div>
-              {formData.needsBus === "yes" && (
-                <div>
-                  <label className="block text-sm font-medium text-white/60 mb-1">
-                    Pickup Location
-                  </label>
-                  <input
-                    type="text"
-                    name="busLocation"
-                    value={formData.busLocation}
-                    onChange={handleChange}
-                    className={inputClasses(errors.busLocation)}
-                    placeholder="Enter your preferred pickup location"
-                    required
-                  />
-                  <ErrorMessage error={errors.busLocation} />
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      case 2:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">
-              Team Information
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Do you have a team?
-                </label>
-                <div className="relative">
-                  <select
-                    name="hasTeam"
-                    value={formData.hasTeam}
-                    onChange={handleChange}
-                    className={selectClasses(errors.hasTeam)}
-                    required
-                  >
-                    <option value="" className="text-white/60">
-                      Select option
-                    </option>
-                    <option value="yes" className="text-white">
-                      Yes, I have a team
-                    </option>
-                    <option value="no" className="text-white">
-                      No, I want to join a team
-                    </option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-white/40"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <ErrorMessage error={errors.hasTeam} />
-              </div>
-              {formData.hasTeam === "yes" && (
-                <>
-                  <div>
-                    <label className="block text-sm font-medium text-white/60 mb-1">
-                      Team Name
-                    </label>
-                    <input
-                      type="text"
-                      name="teamName"
-                      value={formData.teamName}
-                      onChange={handleChange}
-                      className={inputClasses(errors.teamName)}
-                      placeholder="Enter your team name"
-                      required
-                    />
-                    <ErrorMessage error={errors.teamName} />
-                  </div>
-                  <div className="space-y-3">
-                    <label className="block text-sm font-medium text-white/60">
-                      Team Members
-                    </label>
-                    <input
-                      type="text"
-                      name="teamMember1"
-                      value={formData.teamMember1}
-                      onChange={handleChange}
-                      placeholder="Team member 1 full name"
-                      className={inputClasses(errors.teamMember1)}
-                    />
-                    <input
-                      type="text"
-                      name="teamMember2"
-                      value={formData.teamMember2}
-                      onChange={handleChange}
-                      placeholder="Team member 2 full name"
-                      className={inputClasses(errors.teamMember2)}
-                    />
-                    <input
-                      type="text"
-                      name="teamMember3"
-                      value={formData.teamMember3}
-                      onChange={handleChange}
-                      placeholder="Team member 3 full name"
-                      className={inputClasses(errors.teamMember3)}
-                    />
-                  </div>
-                  <ErrorMessage error={errors.teamMembers} />
-                </>
-              )}
-            </div>
-          </div>
-        );
-      case 3:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">
-              Technical Background
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Programming Experience
-                </label>
-                <div className="relative">
-                  <select
-                    name="experience"
-                    value={formData.experience}
-                    onChange={handleChange}
-                    className={selectClasses(errors.experience)}
-                    required
-                  >
-                    <option value="" className="text-white/60">
-                      Select experience
-                    </option>
-                    <option value="beginner" className="text-white">
-                      Beginner ({"<"} 1 year)
-                    </option>
-                    <option value="intermediate" className="text-white">
-                      Intermediate (1-2 years)
-                    </option>
-                    <option value="advanced" className="text-white">
-                      Advanced (2+ years)
-                    </option>
-                  </select>
-                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                    <svg
-                      className="w-5 h-5 text-white/40"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <ErrorMessage error={errors.experience} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Skills (Select all that apply)
-                </label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  {skillOptions.map((skill) => (
-                    <label
-                      key={skill}
-                      className="flex items-center space-x-2 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer group"
-                    >
-                      <input
-                        type="checkbox"
-                        name="skills"
-                        value={skill}
-                        checked={formData.skills.includes(skill)}
-                        onChange={handleChange}
-                        className="rounded border-white/10 bg-white/5 text-emerald-500 focus:ring-emerald-500/50"
-                      />
-                      <span className="text-sm text-white/80 group-hover:text-white transition-colors">
-                        {skill}
-                      </span>
-                    </label>
-                  ))}
-                </div>
-                <ErrorMessage error={errors.skills} />
-              </div>
-              {formData.skills.includes("Other") && (
-                <div>
-                  <label className="block text-sm font-medium text-white/60 mb-1">
-                    Other Skills
-                  </label>
-                  <input
-                    type="text"
-                    name="otherSkills"
-                    value={formData.otherSkills}
-                    onChange={handleChange}
-                    className={inputClasses(errors.otherSkills)}
-                    placeholder="Please specify other skills"
-                    required
-                  />
-                  <ErrorMessage error={errors.otherSkills} />
-                </div>
-              )}
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-6">
-            <h3 className="text-lg font-semibold text-white">
-              Additional Information
-            </h3>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-white/60 mb-1">
-                  Additional Notes
-                </label>
-                <textarea
-                  name="additionalNotes"
-                  value={formData.additionalNotes}
-                  onChange={handleChange}
-                  className={inputClasses(errors.additionalNotes)}
-                  placeholder="Tell us anything else you'd like us to know about you or your participation in the hackathon..."
-                />
-                <ErrorMessage error={errors.additionalNotes} />
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
+      </div>
+    );
   };
 
   // Remove the floating notification
@@ -769,17 +449,17 @@ const RegistrationModal = ({ isOpen, onClose }) => {
       {renderNotification()}
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/90 backdrop-blur-sm"
         onClick={onClose}
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-2xl bg-black/40 rounded-2xl overflow-hidden border border-emerald-500/20 shadow-2xl">
+      <div className="relative w-full max-w-lg bg-black/60 rounded-2xl overflow-hidden border border-emerald-500/30 shadow-2xl backdrop-blur-xl">
         {/* Header */}
         <div className="px-6 py-4 border-b border-white/10">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-white">
-              Join the Challenge
+              DevImpact Registration
             </h2>
             <button
               onClick={onClose}
@@ -800,24 +480,20 @@ const RegistrationModal = ({ isOpen, onClose }) => {
               </svg>
             </button>
           </div>
-          {/* Progress bar */}
-          <div className="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
-            <div
-              className="h-full bg-emerald-500 transition-all duration-300"
-              style={{ width: `${(step / 4) * 100}%` }}
-            />
-          </div>
         </div>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit}>
-          <div className="px-6 py-6 max-h-[calc(100vh-16rem)] overflow-y-auto custom-scrollbar">
-            {renderStep()}
-          </div>
+        {/* Content */}
+        <div className="p-6">{renderStep()}</div>
 
-          {/* Footer */}
-          {renderFormButtons()}
-        </form>
+        {/* Footer */}
+        <div className="px-6 py-4 bg-black/40 border-t border-white/10 flex justify-center">
+          <button
+            onClick={onClose}
+            className="px-6 py-2 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg transition-all"
+          >
+            Close
+          </button>
+        </div>
       </div>
     </div>
   );
