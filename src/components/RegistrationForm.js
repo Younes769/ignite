@@ -30,6 +30,8 @@ const RegistrationForm = ({ isOpen, onClose, type = "ideathon" }) => {
   );
 
   const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -41,9 +43,34 @@ const RegistrationForm = ({ isOpen, onClose, type = "ideathon" }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission here
-    console.log(formData);
-    setShowConfirmation(true);
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch("/api/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type,
+          ...formData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Registration failed");
+      }
+
+      setShowConfirmation(true);
+    } catch (err) {
+      setError(err.message);
+      console.error("Registration error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
@@ -147,6 +174,37 @@ const RegistrationForm = ({ isOpen, onClose, type = "ideathon" }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
+                <div className="flex items-start gap-3">
+                  <svg
+                    className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div>
+                    <p className="text-red-400 font-medium">
+                      Registration Error
+                    </p>
+                    <p className="text-red-300 mt-1 text-sm">{error}</p>
+                    {error === "Email already registered" && (
+                      <p className="text-red-300/80 mt-2 text-sm">
+                        Please use a different email address or contact us if
+                        you need to update your registration.
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
             <div className="space-y-6">
               {/* Common Fields */}
               <div>
@@ -385,9 +443,14 @@ const RegistrationForm = ({ isOpen, onClose, type = "ideathon" }) => {
             {/* Submit Button */}
             <button
               type="submit"
-              className="w-full px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+              disabled={isSubmitting}
+              className={`w-full px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg transition-colors ${
+                isSubmitting
+                  ? "opacity-50 cursor-not-allowed"
+                  : "hover:bg-orange-600"
+              }`}
             >
-              Register
+              {isSubmitting ? "Registering..." : "Register"}
             </button>
           </form>
         </div>

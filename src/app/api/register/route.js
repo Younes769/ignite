@@ -20,32 +20,67 @@ export async function POST(request) {
       );
     }
 
+    // Format data for database
+    const dbData = {
+      full_name: formData.fullName,
+      email: formData.email.toLowerCase(),
+      discord_tag: formData.discordTag,
+      university: formData.university,
+      expectations: formData.expectations,
+    };
+
+    if (type === "ideathon") {
+      Object.assign(dbData, {
+        student_id: formData.studentId,
+        year_of_study: formData.yearOfStudy,
+        major: formData.major,
+        has_team: formData.hasTeam === "yes",
+        team_name: formData.hasTeam === "yes" ? formData.teamName : null,
+        team_member1: formData.hasTeam === "yes" ? formData.teamMember1 : null,
+        team_member2: formData.hasTeam === "yes" ? formData.teamMember2 : null,
+        team_member3: formData.hasTeam === "yes" ? formData.teamMember3 : null,
+      });
+    }
+
     // Check for existing registration
     const table =
       type === "ideathon"
         ? "ideathon_registrations"
         : "startup_track_registrations";
-    const { data: existingUser } = await supabase
+
+    const { data: existingUser, error: checkError } = await supabase
       .from(table)
       .select("email")
-      .eq("email", formData.email)
+      .eq("email", dbData.email)
       .single();
+
+    if (checkError && checkError.code !== "PGRST116") {
+      console.error("Error checking existing user:", checkError);
+      throw new Error("Failed to check existing registration");
+    }
 
     if (existingUser) {
       return NextResponse.json(
-        { error: "Email already registered" },
+        {
+          error: "Email already registered",
+          code: "EMAIL_EXISTS",
+          email: dbData.email,
+        },
         { status: 400 }
       );
     }
 
     // Insert registration
-    const { data: registration, error } = await supabase
+    const { data: registration, error: insertError } = await supabase
       .from(table)
-      .insert([formData])
+      .insert([dbData])
       .select()
       .single();
 
-    if (error) throw error;
+    if (insertError) {
+      console.error("Error inserting registration:", insertError);
+      throw new Error("Failed to save registration");
+    }
 
     // Send confirmation email
     // TODO: Implement email sending logic here
@@ -56,6 +91,9 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Registration error:", error);
-    return NextResponse.json({ error: "Registration failed" }, { status: 500 });
+    return NextResponse.json(
+      { error: error.message || "Registration failed" },
+      { status: 500 }
+    );
   }
 }
