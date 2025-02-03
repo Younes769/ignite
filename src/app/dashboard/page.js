@@ -2,7 +2,11 @@
 
 import { useRouter } from "next/navigation";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
+import StatisticsCards from "@/components/dashboard/StatisticsCards";
+import SearchAndFilters from "@/components/dashboard/SearchAndFilters";
+import BulkActions from "@/components/dashboard/BulkActions";
+import RegistrationDetails from "@/components/dashboard/RegistrationDetails";
 
 const downloadCSV = (data, filename) => {
   const headers = Object.keys(data[0] || {}).filter(
@@ -43,13 +47,148 @@ const downloadCSV = (data, filename) => {
   }
 };
 
+// Utility functions
+const formatDate = (date) => new Date(date).toLocaleDateString();
+
+const getUniqueValues = (data, field) => [
+  ...new Set(data.map((item) => item[field])),
+];
+
 export default function Dashboard() {
   const [ideathonRegistrations, setIdeathonRegistrations] = useState([]);
   const [startupRegistrations, setStartupRegistrations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("ideathon");
+
+  // New state for features
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    university: "all",
+    year: "all",
+    hasTeam: "all",
+  });
+  const [sortConfig, setSortConfig] = useState({
+    field: "created_at",
+    direction: "desc",
+  });
+  const [selectedItems, setSelectedItems] = useState(new Set());
+
+  // Add new state for selected registration
+  const [selectedRegistration, setSelectedRegistration] = useState(null);
+
   const router = useRouter();
   const supabase = createClientComponentClient();
+
+  // Calculate team groups
+  const teamGroups = useMemo(() => {
+    return ideathonRegistrations.reduce((groups, reg) => {
+      if (reg.has_team && reg.team_name) {
+        if (!groups[reg.team_name]) {
+          groups[reg.team_name] = [];
+        }
+        groups[reg.team_name].push(reg);
+      }
+      return groups;
+    }, {});
+  }, [ideathonRegistrations]);
+
+  // Statistics calculations
+  const statistics = useMemo(() => {
+    if (activeTab === "ideathon") {
+      return {
+        total: ideathonRegistrations.length,
+        teams: Object.keys(teamGroups).length,
+        individual: ideathonRegistrations.filter((reg) => !reg.has_team).length,
+      };
+    }
+    return {
+      total: startupRegistrations.length,
+    };
+  }, [activeTab, ideathonRegistrations, startupRegistrations, teamGroups]);
+
+  // Get unique universities for filter
+  const universities = useMemo(() => {
+    const data =
+      activeTab === "ideathon" ? ideathonRegistrations : startupRegistrations;
+    return [...new Set(data.map((reg) => reg.university))].sort();
+  }, [activeTab, ideathonRegistrations, startupRegistrations]);
+
+  // Filter and sort data
+  const filteredData = useMemo(() => {
+    const data =
+      activeTab === "ideathon" ? ideathonRegistrations : startupRegistrations;
+
+    return data
+      .filter((reg) => {
+        const matchesSearch =
+          searchTerm === "" ||
+          reg.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          reg.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          reg.university.toLowerCase().includes(searchTerm.toLowerCase());
+
+        const matchesUniversity =
+          filters.university === "all" || reg.university === filters.university;
+
+        const matchesYear =
+          filters.year === "all" ||
+          (activeTab === "ideathon" && reg.year_of_study === filters.year);
+
+        const matchesTeam =
+          filters.hasTeam === "all" ||
+          (activeTab === "ideathon" &&
+            (filters.hasTeam === "yes") === reg.has_team);
+
+        return matchesSearch && matchesUniversity && matchesYear && matchesTeam;
+      })
+      .sort((a, b) => {
+        const aValue = a[sortConfig.field];
+        const bValue = b[sortConfig.field];
+        const direction = sortConfig.direction === "asc" ? 1 : -1;
+
+        if (typeof aValue === "string") {
+          return direction * aValue.localeCompare(bValue);
+        }
+        return direction * (aValue - bValue);
+      });
+  }, [
+    activeTab,
+    ideathonRegistrations,
+    startupRegistrations,
+    searchTerm,
+    filters,
+    sortConfig,
+  ]);
+
+  const handleSort = (field) => {
+    setSortConfig((prev) => ({
+      field,
+      direction:
+        prev.field === field && prev.direction === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const handleSelectAll = (checked) => {
+    setSelectedItems(
+      checked ? new Set(filteredData.map((reg) => reg.id)) : new Set()
+    );
+  };
+
+  const handleSelectItem = (id, checked) => {
+    const newSelected = new Set(selectedItems);
+    if (checked) {
+      newSelected.add(id);
+    } else {
+      newSelected.delete(id);
+    }
+    setSelectedItems(newSelected);
+  };
+
+  const handleDownloadSelected = () => {
+    const selectedData = filteredData.filter((reg) =>
+      selectedItems.has(reg.id)
+    );
+    downloadCSV(selectedData, `selected-${activeTab}-registrations.csv`);
+  };
 
   useEffect(() => {
     const checkSession = async () => {
@@ -87,17 +226,6 @@ export default function Dashboard() {
     router.push("/login");
   };
 
-  // Group ideathon registrations by team
-  const teamGroups = ideathonRegistrations.reduce((groups, reg) => {
-    if (reg.has_team && reg.team_name) {
-      if (!groups[reg.team_name]) {
-        groups[reg.team_name] = [];
-      }
-      groups[reg.team_name].push(reg);
-    }
-    return groups;
-  }, {});
-
   // Download handlers
   const handleIdeathonDownload = () => {
     downloadCSV(ideathonRegistrations, "ideathon-registrations.csv");
@@ -123,6 +251,13 @@ export default function Dashboard() {
     );
 
     downloadCSV(teamData, "ideathon-teams.csv");
+  };
+
+  // Add click handler function
+  const handleRowClick = (registration, e) => {
+    // Prevent row click when clicking checkbox
+    if (e.target.type === "checkbox") return;
+    setSelectedRegistration(registration);
   };
 
   if (loading) {
@@ -190,6 +325,24 @@ export default function Dashboard() {
           </div>
         </div>
 
+        <StatisticsCards activeTab={activeTab} statistics={statistics} />
+
+        <SearchAndFilters
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          filters={filters}
+          setFilters={setFilters}
+          activeTab={activeTab}
+          universities={universities}
+        />
+
+        <BulkActions
+          selectedItems={selectedItems}
+          setSelectedItems={setSelectedItems}
+          activeTab={activeTab}
+          onDownloadSelected={handleDownloadSelected}
+        />
+
         {/* Ideathon Track Content */}
         {activeTab === "ideathon" && (
           <div>
@@ -244,8 +397,29 @@ export default function Dashboard() {
                 <table className="min-w-full divide-y divide-orange-500/20">
                   <thead>
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
-                        Name
+                      <th className="px-4 py-3">
+                        <input
+                          type="checkbox"
+                          checked={
+                            selectedItems.size === filteredData.length &&
+                            filteredData.length > 0
+                          }
+                          onChange={(e) => handleSelectAll(e.target.checked)}
+                          className="rounded border-orange-500/20 text-orange-500 focus:ring-orange-500"
+                        />
+                      </th>
+                      <th
+                        className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider cursor-pointer hover:text-orange-500 transition-colors"
+                        onClick={() => handleSort("full_name")}
+                      >
+                        <div className="flex items-center gap-2">
+                          Name
+                          {sortConfig.field === "full_name" && (
+                            <span>
+                              {sortConfig.direction === "asc" ? "↑" : "↓"}
+                            </span>
+                          )}
+                        </div>
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
                         Email
@@ -268,8 +442,25 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-orange-500/20">
-                    {ideathonRegistrations.map((reg) => (
-                      <tr key={reg.id} className="hover:bg-orange-500/5">
+                    {filteredData.map((reg) => (
+                      <tr
+                        key={reg.id}
+                        onClick={(e) => handleRowClick(reg, e)}
+                        className="hover:bg-orange-500/5 cursor-pointer"
+                      >
+                        <td
+                          className="px-4 py-4"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selectedItems.has(reg.id)}
+                            onChange={(e) =>
+                              handleSelectItem(reg.id, e.target.checked)
+                            }
+                            className="rounded border-orange-500/20 text-orange-500 focus:ring-orange-500"
+                          />
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {reg.full_name}
                         </td>
@@ -396,8 +587,12 @@ export default function Dashboard() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-orange-500/20">
-                  {startupRegistrations.map((reg) => (
-                    <tr key={reg.id} className="hover:bg-orange-500/5">
+                  {filteredData.map((reg) => (
+                    <tr
+                      key={reg.id}
+                      onClick={(e) => handleRowClick(reg, e)}
+                      className="hover:bg-orange-500/5 cursor-pointer"
+                    >
                       <td className="px-6 py-4 whitespace-nowrap">
                         {reg.full_name}
                       </td>
@@ -422,6 +617,15 @@ export default function Dashboard() {
               </table>
             </div>
           </div>
+        )}
+
+        {/* Registration Details Modal */}
+        {selectedRegistration && (
+          <RegistrationDetails
+            registration={selectedRegistration}
+            type={activeTab}
+            onClose={() => setSelectedRegistration(null)}
+          />
         )}
       </div>
     </div>

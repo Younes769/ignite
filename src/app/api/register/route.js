@@ -49,24 +49,33 @@ export async function POST(request) {
       });
     }
 
-    // Check for existing registration
+    // Determine which table to use
     const table =
       type === "ideathon"
         ? "ideathon_registrations"
         : "startup_track_registrations";
 
+    // Check for existing registration
     const { data: existingUser, error: checkError } = await supabase
       .from(table)
       .select("email")
       .eq("email", dbData.email)
       .single();
 
-    if (checkError && checkError.code !== "PGRST116") {
-      console.error("Error checking existing user:", checkError);
-      throw new Error("Failed to check existing registration");
-    }
-
-    if (existingUser) {
+    if (checkError) {
+      // PGRST116 means no rows returned, which is what we want
+      if (checkError.code !== "PGRST116") {
+        console.error("Error checking existing user:", checkError);
+        return NextResponse.json(
+          {
+            error: "Failed to check existing registration",
+            details: checkError.message,
+            code: "CHECK_ERROR",
+          },
+          { status: 500 }
+        );
+      }
+    } else if (existingUser) {
       return NextResponse.json(
         {
           error: "Email already registered",
@@ -86,11 +95,15 @@ export async function POST(request) {
 
     if (insertError) {
       console.error("Error inserting registration:", insertError);
-      throw new Error("Failed to save registration");
+      return NextResponse.json(
+        {
+          error: "Failed to save registration",
+          details: insertError.message,
+          code: "INSERT_ERROR",
+        },
+        { status: 500 }
+      );
     }
-
-    // Send confirmation email
-    // TODO: Implement email sending logic here
 
     return NextResponse.json({
       message: "Registration successful",
@@ -98,21 +111,11 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Registration error:", error);
-
-    if (error.message.includes("environment variables")) {
-      return NextResponse.json(
-        {
-          error: "Server configuration error. Please contact support.",
-          code: "CONFIG_ERROR",
-        },
-        { status: 500 }
-      );
-    }
-
     return NextResponse.json(
       {
-        error: error.message || "Registration failed",
-        code: "REGISTRATION_ERROR",
+        error: "Registration failed",
+        details: error.message,
+        code: "UNKNOWN_ERROR",
       },
       { status: 500 }
     );
