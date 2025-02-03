@@ -1,10 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+// Validate environment variables
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+if (!supabaseUrl || !supabaseKey) {
+  throw new Error(
+    "Missing environment variables: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY must be set"
+  );
+}
+
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 export async function POST(request) {
   try {
@@ -91,8 +98,22 @@ export async function POST(request) {
     });
   } catch (error) {
     console.error("Registration error:", error);
+
+    if (error.message.includes("environment variables")) {
+      return NextResponse.json(
+        {
+          error: "Server configuration error. Please contact support.",
+          code: "CONFIG_ERROR",
+        },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { error: error.message || "Registration failed" },
+      {
+        error: error.message || "Registration failed",
+        code: "REGISTRATION_ERROR",
+      },
       { status: 500 }
     );
   }
