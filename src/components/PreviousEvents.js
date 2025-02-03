@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const events = [
   {
@@ -91,7 +92,45 @@ const PreviousEvents = () => {
   const [isClient, setIsClient] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredImage, setHoveredImage] = useState(null);
+  const [touchStart, setTouchStart] = useState(null);
   const windowSize = useWindowSize();
+
+  const handleTouchStart = (e) => {
+    setTouchStart(e.touches[0].clientX);
+  };
+
+  const handleTouchMove = (e) => {
+    if (!touchStart) return;
+
+    const touchEnd = e.touches[0].clientX;
+    const diff = touchStart - touchEnd;
+
+    if (Math.abs(diff) > 50) {
+      // minimum swipe distance
+      if (diff > 0 && activeEvent < events.length - 1) {
+        setActiveEvent((prev) => prev + 1);
+      } else if (diff < 0 && activeEvent > 0) {
+        setActiveEvent((prev) => prev - 1);
+      }
+      setTouchStart(null);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setTouchStart(null);
+  };
+
+  const nextEvent = () => {
+    if (activeEvent < events.length - 1) {
+      setActiveEvent((prev) => prev + 1);
+    }
+  };
+
+  const prevEvent = () => {
+    if (activeEvent > 0) {
+      setActiveEvent((prev) => prev - 1);
+    }
+  };
 
   useEffect(() => {
     setIsClient(true);
@@ -143,8 +182,52 @@ const PreviousEvents = () => {
 
         {/* Events showcase */}
         <div className="relative">
-          {/* Event navigation */}
-          <div className="flex justify-center gap-4 mb-16 overflow-x-auto hide-scrollbar">
+          {/* Mobile navigation arrows */}
+          <div className="flex flex-col items-center gap-4 mb-6 sm:hidden">
+            <div className="flex items-center justify-between w-full">
+              <button
+                onClick={prevEvent}
+                className={`p-2 rounded-full bg-orange-500/10 text-orange-400 ${
+                  activeEvent === 0
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-orange-500/20"
+                }`}
+                disabled={activeEvent === 0}
+              >
+                <FiChevronLeft className="w-6 h-6" />
+              </button>
+              <div className="flex gap-2">
+                {events.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setActiveEvent(index)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                      activeEvent === index
+                        ? "bg-orange-500 w-4"
+                        : "bg-orange-500/20 hover:bg-orange-500/40"
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={nextEvent}
+                className={`p-2 rounded-full bg-orange-500/10 text-orange-400 ${
+                  activeEvent === events.length - 1
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-orange-500/20"
+                }`}
+                disabled={activeEvent === events.length - 1}
+              >
+                <FiChevronRight className="w-6 h-6" />
+              </button>
+            </div>
+            <p className="text-sm text-white/40">
+              Swipe or tap dots to navigate
+            </p>
+          </div>
+
+          {/* Event navigation - visible on desktop */}
+          <div className="hidden sm:flex justify-center gap-4 mb-16 overflow-x-auto hide-scrollbar">
             {events.map((event, index) => (
               <button
                 key={index}
@@ -166,8 +249,13 @@ const PreviousEvents = () => {
             ))}
           </div>
 
-          {/* Event details */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+          {/* Event details with touch handlers */}
+          <div
+            className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
             {/* Event information */}
             <div className="space-y-6">
               <div className="inline-block px-4 py-2 rounded-lg bg-orange-500/10 text-orange-400 text-sm font-medium">

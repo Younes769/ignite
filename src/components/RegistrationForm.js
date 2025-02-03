@@ -2,20 +2,32 @@
 
 import { useState } from "react";
 
-const RegistrationForm = ({ isOpen, onClose }) => {
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    yearOfStudy: "",
-    needsBus: "no",
-    busLocation: "",
-    hasTeam: "no",
-    teamName: "",
-    teamMember1: "",
-    teamMember2: "",
-    teamMember3: "",
-    additionalInfo: "",
-  });
+const RegistrationForm = ({ isOpen, onClose, type = "ideathon" }) => {
+  const [formData, setFormData] = useState(
+    type === "ideathon"
+      ? {
+          fullName: "",
+          email: "",
+          discordTag: "",
+          studentId: "",
+          university: "",
+          yearOfStudy: "",
+          major: "",
+          hasTeam: "no",
+          teamName: "",
+          teamMember1: "",
+          teamMember2: "",
+          teamMember3: "",
+          expectations: "",
+        }
+      : {
+          fullName: "",
+          email: "",
+          discordTag: "",
+          university: "",
+          expectations: "",
+        }
+  );
 
   const [showConfirmation, setShowConfirmation] = useState(false);
 
@@ -36,19 +48,31 @@ const RegistrationForm = ({ isOpen, onClose }) => {
 
   const handleClose = () => {
     setShowConfirmation(false);
-    setFormData({
-      fullName: "",
-      email: "",
-      yearOfStudy: "",
-      needsBus: "no",
-      busLocation: "",
-      hasTeam: "no",
-      teamName: "",
-      teamMember1: "",
-      teamMember2: "",
-      teamMember3: "",
-      additionalInfo: "",
-    });
+    setFormData(
+      type === "ideathon"
+        ? {
+            fullName: "",
+            email: "",
+            discordTag: "",
+            studentId: "",
+            university: "",
+            yearOfStudy: "",
+            major: "",
+            hasTeam: "no",
+            teamName: "",
+            teamMember1: "",
+            teamMember2: "",
+            teamMember3: "",
+            expectations: "",
+          }
+        : {
+            fullName: "",
+            email: "",
+            discordTag: "",
+            university: "",
+            expectations: "",
+          }
+    );
     onClose();
   };
 
@@ -97,7 +121,11 @@ const RegistrationForm = ({ isOpen, onClose }) => {
       <div className="bg-black/80 rounded-xl max-w-md w-full border border-orange-500/20">
         <div className="p-6 overflow-y-auto max-h-[80vh] hide-scrollbar">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Register Now</h2>
+            <h2 className="text-2xl font-bold text-white">
+              {type === "ideathon"
+                ? "Ideathon Registration"
+                : "Startup Track Registration"}
+            </h2>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
@@ -119,9 +147,8 @@ const RegistrationForm = ({ isOpen, onClose }) => {
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Form Fields */}
             <div className="space-y-6">
-              {/* Full Name */}
+              {/* Common Fields */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Full Name *
@@ -137,7 +164,6 @@ const RegistrationForm = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
                   Email *
@@ -153,163 +179,216 @@ const RegistrationForm = ({ isOpen, onClose }) => {
                 />
               </div>
 
-              {/* Year of Study */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Year of Study *
+                  Discord Name Tag *
                 </label>
-                <select
-                  name="yearOfStudy"
+                <input
+                  type="text"
+                  name="discordTag"
                   required
-                  value={formData.yearOfStudy}
+                  value={formData.discordTag}
                   onChange={handleChange}
                   className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                >
-                  <option value="">Select Year</option>
-                  <option value="L1">L1</option>
-                  <option value="L2">L2</option>
-                  <option value="L3">L3</option>
-                </select>
-              </div>
-
-              {/* Need Bus */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Need NIT Bus? *
-                </label>
-                <select
-                  name="needsBus"
-                  required
-                  value={formData.needsBus}
-                  onChange={handleChange}
-                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                >
-                  <option value="no">No</option>
-                  <option value="yes">Yes</option>
-                </select>
-              </div>
-
-              {/* Bus Location (conditional) */}
-              {formData.needsBus === "yes" && (
-                <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
-                    Bus Location *
-                  </label>
-                  <input
-                    type="text"
-                    name="busLocation"
-                    required
-                    value={formData.busLocation}
-                    onChange={handleChange}
-                    className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                    placeholder="Your pickup location"
-                  />
-                </div>
-              )}
-
-              {/* Team */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Do you have a team? *
-                </label>
-                <select
-                  name="hasTeam"
-                  required
-                  value={formData.hasTeam}
-                  onChange={handleChange}
-                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                >
-                  <option value="no">No</option>
-                  <option value="yes">Yes</option>
-                </select>
-              </div>
-
-              {/* Team Details (conditional) */}
-              {formData.hasTeam === "yes" && (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Team Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="teamName"
-                      required
-                      value={formData.teamName}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                      placeholder="Your team name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Team Member 1 *
-                    </label>
-                    <input
-                      type="text"
-                      name="teamMember1"
-                      required
-                      value={formData.teamMember1}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                      placeholder="Full name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Team Member 2 *
-                    </label>
-                    <input
-                      type="text"
-                      name="teamMember2"
-                      required
-                      value={formData.teamMember2}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                      placeholder="Full name"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-300 mb-2">
-                      Team Member 3 *
-                    </label>
-                    <input
-                      type="text"
-                      name="teamMember3"
-                      required
-                      value={formData.teamMember3}
-                      onChange={handleChange}
-                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
-                      placeholder="Full name"
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Additional Info */}
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Anything to add?
-                </label>
-                <textarea
-                  name="additionalInfo"
-                  value={formData.additionalInfo}
-                  onChange={handleChange}
-                  rows="3"
-                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all resize-none"
-                  placeholder="Any additional information..."
+                  placeholder="username#0000"
                 />
               </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Which university do you study in? *
+                </label>
+                <input
+                  type="text"
+                  name="university"
+                  required
+                  value={formData.university}
+                  onChange={handleChange}
+                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                  placeholder="Your university"
+                />
+              </div>
+
+              {/* Ideathon-specific fields */}
+              {type === "ideathon" && (
+                <>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Student ID *
+                    </label>
+                    <input
+                      type="text"
+                      name="studentId"
+                      required
+                      value={formData.studentId}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                      placeholder="Your student ID"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Which year are you in? *
+                    </label>
+                    <select
+                      name="yearOfStudy"
+                      required
+                      value={formData.yearOfStudy}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                    >
+                      <option value="">Select Year</option>
+                      <option value="L1">L1</option>
+                      <option value="L2">L2</option>
+                      <option value="L3">L3</option>
+                      <option value="M1">M1</option>
+                      <option value="M2">M2</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      What speciality (major) do you study? *
+                    </label>
+                    <input
+                      type="text"
+                      name="major"
+                      required
+                      value={formData.major}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                      placeholder="Your major/speciality"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                      Do you have a team? *
+                    </label>
+                    <select
+                      name="hasTeam"
+                      required
+                      value={formData.hasTeam}
+                      onChange={handleChange}
+                      className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                    >
+                      <option value="no">No</option>
+                      <option value="yes">Yes</option>
+                    </select>
+                  </div>
+
+                  {formData.hasTeam === "yes" && (
+                    <div className="space-y-4">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Team Name *
+                        </label>
+                        <input
+                          type="text"
+                          name="teamName"
+                          required
+                          value={formData.teamName}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                          placeholder="Your team name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Team Member 1 *
+                        </label>
+                        <input
+                          type="text"
+                          name="teamMember1"
+                          required
+                          value={formData.teamMember1}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                          placeholder="Full name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Team Member 2
+                        </label>
+                        <input
+                          type="text"
+                          name="teamMember2"
+                          value={formData.teamMember2}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                          placeholder="Full name"
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium text-gray-300 mb-2">
+                          Team Member 3
+                        </label>
+                        <input
+                          type="text"
+                          name="teamMember3"
+                          value={formData.teamMember3}
+                          onChange={handleChange}
+                          className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                          placeholder="Full name"
+                        />
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Expectations field */}
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  {type === "ideathon"
+                    ? "What do you expect of this ideathon? *"
+                    : "Do you expect anything of the event? *"}
+                </label>
+                <textarea
+                  name="expectations"
+                  required
+                  value={formData.expectations}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500 transition-all"
+                  placeholder="Share your expectations..."
+                />
+              </div>
+
+              {/* CV Note for Startup Track */}
+              {type !== "ideathon" && (
+                <div className="mt-6 p-4 bg-orange-500/10 border border-orange-500/30 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <svg
+                      className="w-5 h-5 text-orange-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <p className="text-orange-400 font-medium">
+                      Please bring your CV with you if possible
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="pt-4">
-              <button
-                type="submit"
-                className="w-full px-6 py-3 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-all transform hover:scale-[1.02] focus:scale-[0.98]"
-              >
-                Register
-              </button>
-            </div>
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg hover:bg-orange-600 transition-colors"
+            >
+              Register
+            </button>
           </form>
         </div>
       </div>

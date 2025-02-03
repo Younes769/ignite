@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { FaTwitter, FaInstagram, FaLinkedin, FaDiscord } from "react-icons/fa";
+import { FaInstagram, FaLinkedin, FaDiscord } from "react-icons/fa";
+import { FaTiktok } from "react-icons/fa";
 
 const Footer = () => {
   return (
@@ -16,8 +17,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
           {/* Brand section */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
-              EGNITE 2024
+            <h3 className="text-2xl font-bold">
+              <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                IGNITE
+              </span>{" "}
+              2025
             </h3>
             <p className="text-white/60 max-w-sm">
               Ignite your entrepreneurial journey at the intersection of
@@ -25,28 +29,36 @@ const Footer = () => {
             </p>
             <div className="flex space-x-4">
               <a
-                href="#"
+                href="https://www.tiktok.com/@nit_computer_society"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-400 hover:text-orange-300 transition-colors"
-                aria-label="Twitter"
+                aria-label="TikTok"
               >
-                <FaTwitter className="w-5 h-5" />
+                <FaTiktok className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://www.instagram.com/ncs._club/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-400 hover:text-orange-300 transition-colors"
                 aria-label="Instagram"
               >
                 <FaInstagram className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://www.linkedin.com/company/numidia-computer-society/"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-400 hover:text-orange-300 transition-colors"
                 aria-label="LinkedIn"
               >
                 <FaLinkedin className="w-5 h-5" />
               </a>
               <a
-                href="#"
+                href="https://discord.com/invite/DGDBBa6n8d"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-orange-400 hover:text-orange-300 transition-colors"
                 aria-label="Discord"
               >
@@ -104,24 +116,11 @@ const Footer = () => {
             <ul className="space-y-2 text-white/60">
               <li>
                 <a
-                  href="mailto:contact@egnite2024.com"
+                  href="mailto:numidiacomputersociety@gmail.com"
                   className="hover:text-orange-400 transition-colors"
                 >
-                  contact@egnite2024.com
+                  numidiacomputersociety@gmail.com
                 </a>
-              </li>
-              <li>
-                <a
-                  href="tel:+1234567890"
-                  className="hover:text-orange-400 transition-colors"
-                >
-                  +123 456 7890
-                </a>
-              </li>
-              <li className="max-w-xs">
-                123 Innovation Street,
-                <br />
-                Startup District, ST 12345
               </li>
             </ul>
           </div>
@@ -131,7 +130,7 @@ const Footer = () => {
         <div className="pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-white/40 text-sm">
-              © 2024 EGNITE. All rights reserved.
+              © 2025 All rights reserved to NCS club.
             </p>
             <div className="flex space-x-6 text-sm">
               <Link
