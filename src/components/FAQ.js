@@ -1,48 +1,58 @@
 "use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 const faqs = [
   {
-    question: "What is DevImpact Hackathon?",
-    answer: "A 72-hour coding adventure where you'll turn caffeine into code and dreams into reality! It's like a marathon, but instead of running, you're typing... and instead of getting tired legs, you get tired eyes! 👀"
+    question: "What is EGNITE?",
+    answer:
+      "EGNITE is a unique three-day event combining a startup showcase and ideathon. Day 1 features an interactive startup exhibition, while Days 2-3 are dedicated to an exciting ideathon where participants develop innovative solutions. 🚀",
   },
   {
-    question: "Why should I participate?",
-    answer: "Why did the programmer quit his job? Because he didn't get arrays! 😄 But seriously, you'll get to build amazing projects, network with fellow developers, and maybe win some cool prizes. Plus, free food! 🍕"
+    question: "How does the startup showcase work?",
+    answer:
+      "On Day 1, various startups will have dedicated spaces where you can interact with their representatives, learn about their journey, and get inspired by their innovations. It's a great opportunity to network and learn from real-world experiences! 💡",
   },
   {
-    question: "Do I need to be an expert programmer?",
-    answer: "Not at all! Even a programmer who puts 'Hello World' on their resume is welcome! We welcome all skill levels, from 'I just learned what HTML stands for' to 'I debug in my sleep'. 💻"
+    question: "What is the ideathon format?",
+    answer:
+      "The ideathon spans Days 2-3, where participants form teams to develop innovative solutions to real-world challenges. You'll get guidance from mentors, work on your ideas, and present them to judges for a chance to win exciting prizes! 🏆",
   },
   {
-    question: "What should I bring?",
-    answer: "Your laptop, charger, and enthusiasm! And maybe a rubber duck for debugging - it's like a therapist, but cheaper! 🦆"
+    question: "Who can participate in the ideathon?",
+    answer:
+      "Anyone with innovative ideas is welcome! Whether you're a student, professional, or enthusiast, if you're passionate about creating impactful solutions, EGNITE is for you. No technical expertise required - we value creativity and innovation! ✨",
   },
   {
     question: "How does team formation work?",
-    answer: "Why did the two functions stop calling each other? Because they had constant arguments! 😅 You can either form a team beforehand or find teammates during the event. Max team size is 4 members."
+    answer:
+      "You can either form a team beforehand or find teammates during the event. Teams should have 2-4 members. Don't worry if you don't have a team - we'll help you connect with other participants! 🤝",
   },
   {
-    question: "What kind of projects can we build?",
-    answer: "Anything! From web apps to mobile apps to AI and more. Just remember: there are 10 types of projects in the world - those that work and those that don't! (Get it? Binary joke! 🤓)"
+    question: "What kind of ideas can we work on?",
+    answer:
+      "Any innovative solution that addresses real-world problems! Your idea could be related to technology, business, social impact, or any other domain. The key is to think creatively and focus on feasibility and impact. 🌟",
   },
   {
-    question: "Is there food provided?",
-    answer: "Yes! We'll keep you fueled with food and drinks. After all, a programmer's stomach is like a stack - it's always pushing for more! 🍔"
+    question: "Will there be food and refreshments?",
+    answer:
+      "Yes! We'll provide meals and refreshments throughout the event to keep you energized and focused on your ideas! 🍽️",
   },
   {
-    question: "What's the judging criteria?",
-    answer: "Projects will be judged on innovation, technical complexity, and impact. And no, 'It works on my machine' is not a valid defense! 😉"
+    question: "What's the judging criteria for the ideathon?",
+    answer:
+      "Projects will be judged on innovation, feasibility, potential impact, and presentation quality. Our panel of experienced judges will evaluate how well your solution addresses the problem and its potential for real-world implementation. ⭐",
   },
   {
-    question: "Will there be mentors?",
-    answer: "Yes! Our mentors are like a guide for your project - they'll help you navigate through challenges and ensure you're on the right track! 🧐"
+    question: "Will there be mentors available?",
+    answer:
+      "Absolutely! We have industry experts and experienced mentors who will guide you throughout the ideathon. They'll help you refine your ideas and provide valuable insights for development. 🎯",
   },
   {
-    question: "How can I make the most of this event?",
-    answer: "Collaborate, network, and have fun! Meet fellow developers, share ideas. Remember: networking is just socializing with better variable names! 🤝"
-  }
+    question: "What should I bring?",
+    answer:
+      "Bring your laptop, charger, and most importantly, your creative mindset! All other materials and resources will be provided at the venue. 💻",
+  },
 ];
 
 const FAQ = () => {
@@ -54,8 +64,8 @@ const FAQ = () => {
         <h2 className="text-3xl sm:text-4xl font-bold text-center mb-12">
           <span className="text-white">Frequently Asked </span>
           <span className="relative inline-block">
-            <span className="absolute -inset-1 bg-emerald-500/20 blur-xl rounded-full"></span>
-            <span className="relative bg-gradient-to-r from-emerald-400 to-emerald-300 text-transparent bg-clip-text">
+            <span className="absolute -inset-1 bg-orange-500/20 blur-xl rounded-full"></span>
+            <span className="relative bg-gradient-to-r from-orange-400 to-orange-500 text-transparent bg-clip-text">
               Questions
             </span>
           </span>
@@ -63,29 +73,28 @@ const FAQ = () => {
 
         <div className="space-y-4">
           {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="relative group"
-            >
+            <div key={index} className="relative group">
               {/* Background glow effect */}
-              <div 
+              <div
                 className={`
-                  absolute -inset-px bg-gradient-to-r from-emerald-500/20 to-emerald-500/0 
+                  absolute -inset-px bg-gradient-to-r from-orange-500/20 to-orange-500/0 
                   rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300
-                  ${openIndex === index ? 'opacity-100' : ''}
+                  ${openIndex === index ? "opacity-100" : ""}
                 `}
               />
-              
+
               {/* FAQ Item */}
               <div className="relative bg-white/5 rounded-xl backdrop-blur-sm border border-white/10 overflow-hidden">
                 <button
-                  onClick={() => setOpenIndex(openIndex === index ? null : index)}
+                  onClick={() =>
+                    setOpenIndex(openIndex === index ? null : index)
+                  }
                   className="w-full px-6 py-4 text-left flex items-center justify-between"
                 >
                   <span className="text-white font-medium">{faq.question}</span>
                   <svg
                     className={`w-5 h-5 text-white/60 transform transition-transform duration-200 ${
-                      openIndex === index ? 'rotate-180' : ''
+                      openIndex === index ? "rotate-180" : ""
                     }`}
                     fill="none"
                     viewBox="0 0 24 24"
@@ -99,12 +108,12 @@ const FAQ = () => {
                     />
                   </svg>
                 </button>
-                
+
                 {/* Answer */}
                 <div
                   className={`
                     px-6 overflow-hidden transition-all duration-300 ease-in-out
-                    ${openIndex === index ? 'max-h-96 pb-4' : 'max-h-0'}
+                    ${openIndex === index ? "max-h-96 pb-4" : "max-h-0"}
                   `}
                 >
                   <p className="text-white/60">{faq.answer}</p>
@@ -118,4 +127,4 @@ const FAQ = () => {
   );
 };
 
-export default FAQ; 
+export default FAQ;

@@ -13,7 +13,6 @@ const ParticlesBackground = () => {
     let animationFrameId;
     let lastTime = 0;
 
-    // Set canvas size with device pixel ratio for retina displays
     const setCanvasSize = () => {
       const dpr = window.devicePixelRatio || 1;
       canvas.width = window.innerWidth * dpr;
@@ -23,23 +22,46 @@ const ParticlesBackground = () => {
       canvas.style.height = `${window.innerHeight}px`;
     };
 
-    // Initialize particles
+    const createParticle = (x, y) => ({
+      x: x || Math.random() * canvas.width,
+      y: y || canvas.height + Math.random() * 20,
+      size: 2 + Math.random() * 3,
+      speedX: (Math.random() - 0.5) * 1,
+      speedY: -2 - Math.random() * 2,
+      life: 1,
+      decay: 0.0015 + Math.random() * 0.002,
+      temperature: 0.6 + Math.random() * 0.4,
+      wobble: Math.random() * Math.PI * 2,
+      wobbleSpeed: 0.15 + Math.random() * 0.15,
+    });
+
     const initParticles = () => {
       particles.current = [];
       const numberOfParticles = Math.min(
-        100,
-        Math.floor((canvas.width * canvas.height) / 20000)
+        200,
+        Math.floor((canvas.width * canvas.height) / 12000)
       );
 
       for (let i = 0; i < numberOfParticles; i++) {
-        particles.current.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          size: 2, // Small, consistent size
-          speedX: (Math.random() - 0.5) * 0.5,
-          speedY: (Math.random() - 0.5) * 0.5,
-          connections: [], // Track connected particles
-        });
+        particles.current.push(createParticle());
+      }
+    };
+
+    const getParticleColor = (particle) => {
+      const alpha = particle.life * 0.9;
+      if (particle.temperature > 0.6) {
+        // Hot particles (yellow/white)
+        return `hsla(${15 + (1 - particle.temperature) * 15}, 100%, ${
+          85 + particle.temperature * 15
+        }%, ${alpha})`;
+      } else if (particle.temperature > 0.3) {
+        // Medium temperature (orange)
+        return `hsla(${
+          25 + (1 - particle.temperature) * 15
+        }, 100%, 60%, ${alpha})`;
+      } else {
+        // Cooler particles (red)
+        return `hsla(${5 + particle.temperature * 15}, 100%, 50%, ${alpha})`;
       }
     };
 
@@ -53,134 +75,94 @@ const ParticlesBackground = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Update and draw particles
-      particles.current.forEach((particle) => {
-        // Update position
-        particle.x += particle.speedX;
+      // Add new particles more frequently
+      if (Math.random() < 0.5) {
+        const x =
+          canvas.width * 0.5 + (Math.random() - 0.5) * canvas.width * 0.6;
+        particles.current.push(createParticle(x));
+      }
+
+      particles.current = particles.current.filter((particle) => {
+        // Update particle position with enhanced wobble
+        particle.wobble += particle.wobbleSpeed;
+        particle.x += particle.speedX + Math.sin(particle.wobble) * 0.5;
         particle.y += particle.speedY;
 
-        // Bounce off edges
-        if (particle.x < 0 || particle.x > canvas.width) particle.speedX *= -1;
-        if (particle.y < 0 || particle.y > canvas.height) particle.speedY *= -1;
+        // Simulate rising heat effect
+        particle.speedY *= 0.98;
+        particle.speedX *= 0.995;
 
-        // Keep particle within bounds
-        particle.x = Math.max(0, Math.min(canvas.width, particle.x));
-        particle.y = Math.max(0, Math.min(canvas.height, particle.y));
+        // Update life and temperature
+        particle.life -= particle.decay;
+        particle.temperature = Math.max(
+          0,
+          particle.temperature - particle.decay * 0.3
+        );
 
-        // Reset connections
-        particle.connections = [];
-      });
+        // Draw particle with enhanced glow effect
+        const color = getParticleColor(particle);
 
-      // Find connections and create shapes
-      particles.current.forEach((particle, i) => {
-        particles.current.slice(i + 1).forEach((otherParticle) => {
-          const dx = particle.x - otherParticle.x;
-          const dy = particle.y - otherParticle.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
+        // Outer glow
+        const gradient = ctx.createRadialGradient(
+          particle.x,
+          particle.y,
+          0,
+          particle.x,
+          particle.y,
+          particle.size * 4
+        );
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(0.6, color.replace(", 0.9)", ", 0.3)"));
+        gradient.addColorStop(1, "hsla(30, 100%, 50%, 0)");
 
-          if (distance < 150) {
-            // Connection distance threshold
-            particle.connections.push(otherParticle);
-            otherParticle.connections.push(particle);
-          }
-        });
-      });
-
-      // Draw connections first (lines behind dots)
-      ctx.beginPath();
-      particles.current.forEach((particle) => {
-        particle.connections.forEach((connected) => {
-          const distance = Math.hypot(
-            particle.x - connected.x,
-            particle.y - connected.y
-          );
-          const opacity = 1 - distance / 150;
-
-          ctx.strokeStyle = `rgba(16, 185, 129, ${opacity * 0.5})`;
-          ctx.lineWidth = 1;
-
-          ctx.moveTo(particle.x, particle.y);
-          ctx.lineTo(connected.x, connected.y);
-        });
-      });
-      ctx.stroke();
-
-      // Draw particles
-      particles.current.forEach((particle) => {
         ctx.beginPath();
-        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-        ctx.fillStyle = "rgba(16, 185, 129, 0.8)";
+        ctx.arc(particle.x, particle.y, particle.size * 4, 0, Math.PI * 2);
+        ctx.fillStyle = gradient;
         ctx.fill();
 
-        // Optional: Add a subtle glow to connection points
-        if (particle.connections.length > 0) {
-          ctx.beginPath();
-          ctx.arc(particle.x, particle.y, particle.size + 1, 0, Math.PI * 2);
-          ctx.fillStyle = "rgba(16, 185, 129, 0.1)";
-          ctx.fill();
-        }
+        // Core
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        return particle.life > 0;
       });
 
-      // Find and draw triangles
-      particles.current.forEach((p1, i) => {
-        p1.connections.forEach((p2, j) => {
-          p2.connections.forEach((p3) => {
-            if (p3.connections.includes(p1)) {
-              // We found a triangle
-              const opacity = 0.03;
-              ctx.beginPath();
-              ctx.moveTo(p1.x, p1.y);
-              ctx.lineTo(p2.x, p2.y);
-              ctx.lineTo(p3.x, p3.y);
-              ctx.closePath();
-              ctx.fillStyle = `rgba(16, 185, 129, ${opacity})`;
-              ctx.fill();
-            }
-          });
-        });
+      // Enhanced mouse interaction
+      particles.current.forEach((particle) => {
+        const dx = mouse.current.x - particle.x;
+        const dy = mouse.current.y - particle.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        if (distance < 150) {
+          particle.speedX -= (dx / distance) * 0.05;
+          particle.speedY -= (dy / distance) * 0.05;
+          particle.life = Math.min(particle.life + 0.1, 1);
+          particle.temperature = Math.min(particle.temperature + 0.2, 1);
+        }
       });
 
       animationFrameId = requestAnimationFrame(animate);
     };
 
-    // Throttled event handlers
-    let isThrottled = false;
-    const throttleTime = 16;
-
     const handleMouseMove = (e) => {
-      if (!isThrottled) {
-        const rect = canvas.getBoundingClientRect();
-        const dpr = window.devicePixelRatio || 1;
-        mouse.current.x = (e.clientX - rect.left) * dpr;
-        mouse.current.y = (e.clientY - rect.top) * dpr;
-
-        isThrottled = true;
-        setTimeout(() => {
-          isThrottled = false;
-        }, throttleTime);
-      }
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      mouse.current.x = (e.clientX - rect.left) * dpr;
+      mouse.current.y = (e.clientY - rect.top) * dpr;
     };
 
     const handleResize = () => {
-      if (!isThrottled) {
-        setCanvasSize();
-        initParticles();
-
-        isThrottled = true;
-        setTimeout(() => {
-          isThrottled = false;
-        }, throttleTime);
-      }
+      setCanvasSize();
+      initParticles();
     };
 
-    // Initialize
     setCanvasSize();
     initParticles();
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("resize", handleResize);
     animationFrameId = requestAnimationFrame(animate);
 
-    // Cleanup
     return () => {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("resize", handleResize);
@@ -195,6 +177,7 @@ const ParticlesBackground = () => {
       style={{
         background: "transparent",
         mixBlendMode: "screen",
+        opacity: 0.8,
       }}
     />
   );
