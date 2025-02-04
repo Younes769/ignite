@@ -22,33 +22,34 @@ const stats = [
   },
   {
     id: 2,
-    title: "Universities",
-    value: 15,
+    title: "Mentors",
+    value: 0,
+    suffix: "+",
     icon: (
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.5}
-        d="M12 14l9-5-9-5-9 5 9 5z M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z M12 14l-6.16-3.422a12.083 12.083 0 00-.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 016.824-2.998 12.078 12.078 0 00-.665-6.479L12 14z"
+        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
       />
     ),
-    description: "Participating institutions across Algeria",
+    description: "Expert mentors guiding participants",
     gradient: "from-orange-500 via-red-400 to-orange-500",
   },
   {
     id: 3,
-    title: "Awards",
-    value: 100000,
-    suffix: "DA",
+    title: "Workshops",
+    value: 0,
+    suffix: "+",
     icon: (
       <path
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.5}
-        d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
       />
     ),
-    description: "Total awards pool for winners",
+    description: "Interactive learning sessions",
     gradient: "from-orange-500 via-yellow-400 to-orange-500",
   },
   {

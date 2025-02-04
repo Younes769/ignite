@@ -10,7 +10,7 @@ export default function StatisticsCards({ activeTab, statistics }) {
         </p>
       </div>
 
-      {activeTab === "ideathon" && (
+      {activeTab === "ideathon" ? (
         <>
           <div className="bg-black/50 border border-orange-500/20 rounded-xl p-6">
             <h3 className="text-sm font-medium text-gray-400">Teams</h3>
@@ -25,6 +25,26 @@ export default function StatisticsCards({ activeTab, statistics }) {
             </h3>
             <p className="mt-2 text-3xl font-bold text-orange-500">
               {statistics.individual}
+            </p>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="bg-black/50 border border-orange-500/20 rounded-xl p-6">
+            <h3 className="text-sm font-medium text-gray-400">
+              Registered Today
+            </h3>
+            <p className="mt-2 text-3xl font-bold text-orange-500">
+              {statistics.todayCount || 0}
+            </p>
+          </div>
+
+          <div className="bg-black/50 border border-orange-500/20 rounded-xl p-6">
+            <h3 className="text-sm font-medium text-gray-400">
+              Registered This Week
+            </h3>
+            <p className="mt-2 text-3xl font-bold text-orange-500">
+              {statistics.weekCount || 0}
             </p>
           </div>
         </>
