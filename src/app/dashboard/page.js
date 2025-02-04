@@ -76,6 +76,9 @@ export default function Dashboard() {
   // Add new state for selected registration
   const [selectedRegistration, setSelectedRegistration] = useState(null);
 
+  // Add to existing state declarations
+  const [existingTeams, setExistingTeams] = useState([]);
+
   const router = useRouter();
   const supabase = createClientComponentClient();
 
@@ -202,6 +205,7 @@ export default function Dashboard() {
     };
 
     const fetchData = async () => {
+      // Fetch registrations
       const { data: ideathon } = await supabase
         .from("ideathon_registrations")
         .select("*")
@@ -212,8 +216,15 @@ export default function Dashboard() {
         .select("*")
         .order("created_at", { ascending: false });
 
+      // Get unique team names
+      const teams = new Set();
+      ideathon?.forEach((reg) => {
+        if (reg.team_name) teams.add(reg.team_name);
+      });
+
       setIdeathonRegistrations(ideathon || []);
       setStartupRegistrations(startup || []);
+      setExistingTeams(Array.from(teams));
       setLoading(false);
     };
 
@@ -341,6 +352,21 @@ export default function Dashboard() {
           setSelectedItems={setSelectedItems}
           activeTab={activeTab}
           onDownloadSelected={handleDownloadSelected}
+          existingTeams={existingTeams}
+          onTeamUpdate={async () => {
+            const { data: ideathon } = await supabase
+              .from("ideathon_registrations")
+              .select("*")
+              .order("created_at", { ascending: false });
+
+            const teams = new Set();
+            ideathon?.forEach((reg) => {
+              if (reg.team_name) teams.add(reg.team_name);
+            });
+
+            setIdeathonRegistrations(ideathon || []);
+            setExistingTeams(Array.from(teams));
+          }}
         />
 
         {/* Ideathon Track Content */}
