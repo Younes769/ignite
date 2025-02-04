@@ -7,77 +7,88 @@ export default function SearchAndFilters({
   universities,
 }) {
   return (
-    <div className="flex flex-wrap gap-4 mb-8">
-      <div className="flex-1 min-w-[200px]">
-        <div className="relative">
+    <div className="mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {/* Search Input */}
+        <div className="col-span-2">
+          <label className="block text-sm font-medium text-gray-400 mb-1">
+            Search
+          </label>
           <input
             type="text"
-            placeholder="Search by name, email, or university..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-black/30 border border-orange-500/20 rounded-lg pl-10 pr-4 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors"
+            placeholder="Search by name, email, or university..."
+            className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
           />
-          <svg
-            className="absolute left-3 top-2.5 w-5 h-5 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
         </div>
-      </div>
 
-      <select
-        value={filters.university}
-        onChange={(e) =>
-          setFilters((prev) => ({ ...prev, university: e.target.value }))
-        }
-        className="bg-black/30 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500 transition-colors"
-      >
-        <option value="all">All Universities</option>
-        {universities.map((uni) => (
-          <option key={uni} value={uni}>
-            {uni}
-          </option>
-        ))}
-      </select>
-
-      {activeTab === "ideathon" && (
-        <>
+        {/* University Filter */}
+        <div>
+          <label className="block text-sm font-medium text-gray-400 mb-1">
+            University
+          </label>
           <select
-            value={filters.year}
+            value={filters.university}
             onChange={(e) =>
-              setFilters((prev) => ({ ...prev, year: e.target.value }))
+              setFilters((prev) => ({ ...prev, university: e.target.value }))
             }
-            className="bg-black/30 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500 transition-colors"
+            className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
           >
-            <option value="all">All Years</option>
-            {["L1", "L2", "L3", "M1", "M2"].map((year) => (
-              <option key={year} value={year}>
-                {year}
+            <option value="all">All Universities</option>
+            {universities.map((uni) => (
+              <option key={uni} value={uni}>
+                {uni}
               </option>
             ))}
           </select>
+        </div>
 
-          <select
-            value={filters.hasTeam}
-            onChange={(e) =>
-              setFilters((prev) => ({ ...prev, hasTeam: e.target.value }))
-            }
-            className="bg-black/30 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500 transition-colors"
-          >
-            <option value="all">All Team Status</option>
-            <option value="yes">Has Team</option>
-            <option value="no">No Team</option>
-          </select>
-        </>
-      )}
+        {/* Year Filter - Only for Ideathon */}
+        {activeTab === "ideathon" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">
+              Year of Study
+            </label>
+            <select
+              value={filters.year}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, year: e.target.value }))
+              }
+              className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
+            >
+              <option value="all">All Years</option>
+              <option value="1">1st Year</option>
+              <option value="2">2nd Year</option>
+              <option value="3">3rd Year</option>
+              <option value="4">4th Year</option>
+              <option value="5">5th Year</option>
+              <option value="Master">Master</option>
+              <option value="PhD">PhD</option>
+            </select>
+          </div>
+        )}
+
+        {/* Team Filter - Only for Ideathon */}
+        {activeTab === "ideathon" && (
+          <div>
+            <label className="block text-sm font-medium text-gray-400 mb-1">
+              Team Status
+            </label>
+            <select
+              value={filters.hasTeam}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, hasTeam: e.target.value }))
+              }
+              className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
+            >
+              <option value="all">All</option>
+              <option value="yes">Has Team</option>
+              <option value="no">No Team</option>
+            </select>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

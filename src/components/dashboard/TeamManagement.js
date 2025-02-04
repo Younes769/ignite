@@ -1,173 +1,182 @@
 import { useState } from "react";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function TeamManagement({
   selectedItems,
+  existingTeams = [],
   onClose,
-  onSuccess,
-  existingTeams,
+  onUpdate,
+  setSelectedItems,
 }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [teamName, setTeamName] = useState("");
-  const [action, setAction] = useState("create"); // create, assign, unassign
+  const [error, setError] = useState("");
+  const supabase = createClientComponentClient();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError(null);
-    setIsLoading(true);
+    if (!teamName) {
+      setError("Please enter a team name");
+      return;
+    }
 
+    setLoading(true);
     try {
-      // Validate team name for create action
-      if (action === "create" && (!teamName || teamName.trim() === "")) {
-        throw new Error("Team name is required");
+      console.log("Updating team for IDs:", Array.from(selectedItems));
+      console.log("New team name:", teamName);
+
+      // Update all selected registrations with the new team name
+      const { data, error } = await supabase
+        .from("ideathon_registrations")
+        .update({
+          has_team: true,
+          team_name: teamName,
+        })
+        .in("id", Array.from(selectedItems))
+        .select();
+
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
       }
 
-      // For assign action, use selected team name
-      const finalTeamName =
-        action === "create"
-          ? teamName
-          : action === "assign" && existingTeams.length > 0
-          ? teamName || existingTeams[0]
-          : null;
+      console.log("Update successful:", data);
 
-      const response = await fetch("/api/teams", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action,
-          teamName: finalTeamName,
-          members: Array.from(selectedItems),
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to manage team");
-      }
-
-      // Show success message
-      console.log("Success:", data.message);
-
-      // Call success callback
-      onSuccess();
+      // Clear selection and refresh data
+      setSelectedItems(new Set());
+      if (onUpdate) await onUpdate();
       onClose();
     } catch (error) {
-      console.error("Team management error:", error);
-      setError(error.message);
+      console.error("Error updating team:", error);
+      setError("Failed to update team. Error: " + error.message);
     } finally {
-      setIsLoading(false);
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveFromTeam = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase
+        .from("ideathon_registrations")
+        .update({
+          has_team: false,
+          team_name: null,
+        })
+        .in("id", Array.from(selectedItems));
+
+      if (error) throw error;
+
+      // Clear selection and refresh data
+      setSelectedItems(new Set());
+      if (onUpdate) await onUpdate();
+      onClose();
+    } catch (error) {
+      console.error("Error removing from team:", error);
+      setError("Failed to remove from team. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-black/80 rounded-xl max-w-md w-full border border-orange-500/20">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div className="bg-black/80 border border-orange-500/20 rounded-xl w-full max-w-md">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-bold text-white">Team Management</h2>
+            <h2 className="text-2xl font-bold text-white">Manage Team</h2>
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-white transition-colors"
+              className="text-orange-200/60 hover:text-orange-200 transition-colors"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
+              ✕
             </button>
           </div>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/30 rounded-lg">
-              <p className="text-red-400 text-sm">{error}</p>
+            <div className="mb-4 p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400">
+              {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">
-                Action
-              </label>
-              <select
-                value={action}
-                onChange={(e) => {
-                  setAction(e.target.value);
-                  setTeamName(""); // Reset team name when changing action
-                }}
-                className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors"
-              >
-                <option value="create">Create New Team</option>
-                {existingTeams.length > 0 && (
-                  <option value="assign">Assign to Existing Team</option>
-                )}
-                <option value="unassign">Unassign from Team</option>
-              </select>
+              <label className="block text-orange-200/80 mb-1">Team Name</label>
+              <input
+                type="text"
+                value={teamName}
+                onChange={(e) => setTeamName(e.target.value)}
+                placeholder="Enter team name"
+                className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
+              />
+              {existingTeams.length > 0 && (
+                <div className="mt-2">
+                  <label className="block text-sm text-orange-200/60 mb-1">
+                    Existing Teams:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {existingTeams.map((team) => (
+                      <button
+                        key={team}
+                        type="button"
+                        onClick={() => setTeamName(team)}
+                        className="px-2 py-1 text-sm bg-orange-500/10 hover:bg-orange-500/20 text-orange-500 rounded transition-colors"
+                      >
+                        {team}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            {action === "create" && (
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Team Name
-                </label>
-                <input
-                  type="text"
-                  value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  required
-                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition-colors"
-                  placeholder="Enter team name"
-                />
-              </div>
-            )}
-
-            {action === "assign" && existingTeams.length > 0 && (
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Select Team
-                </label>
-                <select
-                  value={teamName}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  required
-                  className="w-full bg-black/30 border border-orange-500/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-orange-500 transition-colors"
-                >
-                  {existingTeams.map((team) => (
-                    <option key={team} value={team}>
-                      {team}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            <div className="pt-4">
+            <div className="flex flex-col gap-4">
               <button
                 type="submit"
-                disabled={isLoading}
-                className={`w-full px-4 py-3 bg-orange-500 text-white font-semibold rounded-lg transition-colors ${
-                  isLoading
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-orange-600"
-                }`}
+                disabled={loading}
+                className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                {isLoading
-                  ? "Processing..."
-                  : action === "create"
-                  ? "Create Team"
-                  : action === "assign"
-                  ? "Assign to Team"
-                  : "Unassign from Team"}
+                {loading ? (
+                  <>
+                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                        fill="none"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    Updating...
+                  </>
+                ) : (
+                  "Update Team"
+                )}
+              </button>
+
+              <button
+                type="button"
+                onClick={handleRemoveFromTeam}
+                disabled={loading}
+                className="w-full px-6 py-2 border border-red-500/20 text-red-400 hover:bg-red-500/10 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Remove from Team
+              </button>
+
+              <button
+                type="button"
+                onClick={onClose}
+                className="w-full px-6 py-2 text-orange-200/60 hover:text-orange-200 transition-colors"
+                disabled={loading}
+              >
+                Cancel
               </button>
             </div>
           </form>
