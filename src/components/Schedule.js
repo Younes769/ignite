@@ -638,7 +638,7 @@ const Schedule = () => {
         {/* Header with artistic text */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 mb-8">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold art-text">
-            Event Schedule
+            
           </h2>
 
           {/* View toggle with artistic glass effect */}
