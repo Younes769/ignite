@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { FaInstagram, FaLinkedin, FaDiscord } from "react-icons/fa";
 import { FaTiktok } from "react-icons/fa";
+import Logo from "./Logo";
 
 const Footer = () => {
   return (
@@ -15,14 +16,9 @@ const Footer = () => {
       <div className="relative max-w-7xl mx-auto px-4 py-16">
         {/* Main footer content */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12">
-          {/* Brand section */}
+          {/* Brand section with Logo */}
           <div className="space-y-4">
-            <h3 className="text-2xl font-bold">
-              <span className="bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
-                IGNITE
-              </span>{" "}
-              2025
-            </h3>
+            <Logo size="large" withText={true} animated={false} />
             <p className="text-white/60 max-w-sm">
               Ignite your entrepreneurial journey at the intersection of
               innovation and opportunity.

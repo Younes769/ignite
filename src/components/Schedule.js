@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback, memo } from "react";
 import AnimatedSVG from "./AnimatedSVG";
 import { useWindowSize } from "@/hooks/useWindowSize";
+import Image from "next/image";
 
 const events = [
   {
@@ -607,6 +608,27 @@ const Schedule = () => {
       id="schedule-section"
       className="py-8 sm:py-16 md:py-24 relative overflow-hidden schedule-container art-texture"
     >
+      {/* Logo Header */}
+      <div className="relative mb-16 flex flex-col items-center">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-orange-500/10 blur-[100px] rounded-full"></div>
+        <div className="relative w-48 h-48 mb-8 transform hover:scale-105 transition-transform duration-300">
+          <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-full blur-xl animate-pulse"></div>
+          <Image
+            src="/IGNITE_LOGO.svg"
+            alt="IGNITE Logo"
+            width={192}
+            height={192}
+            className="relative z-10 drop-shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+          />
+        </div>
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-4 bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 text-transparent bg-clip-text">
+          Event Schedule
+        </h2>
+        <p className="text-orange-200/60 text-center max-w-2xl mx-auto">
+          Three days of innovation, learning, and transformation
+        </p>
+      </div>
+
       {/* Artistic background elements */}
       <div className="absolute inset-0 art-ink bg-gradient-to-b from-orange-500/10 to-transparent"></div>
       <div className="absolute inset-0 art-brush opacity-20"></div>
