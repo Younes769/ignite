@@ -227,6 +227,13 @@ export default function ImportCSVModal({
             {activeTab === "ideathon" ? (
               <>
                 <button
+                  onClick={() => handleDownload("all")}
+                  disabled={loading}
+                  className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  Download All Participants
+                </button>
+                <button
                   onClick={() => handleDownload("teams")}
                   disabled={loading}
                   className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
