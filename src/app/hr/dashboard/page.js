@@ -324,7 +324,38 @@ export default function Dashboard() {
       alert("No startup registrations to download");
       return;
     }
-    downloadWithTemplate(startupRegistrations, "startup_registrations.csv");
+
+    try {
+      // Get headers from the first registration
+      const headers = Object.keys(startupRegistrations[0]);
+
+      // Create CSV content with proper escaping
+      const csvContent = [
+        headers.join(","),
+        ...startupRegistrations.map((item) =>
+          headers
+            .map((header) => {
+              const value = item[header]?.toString() || "";
+              return value.includes(",") ? `"${value}"` : value;
+            })
+            .join(",")
+        ),
+      ].join("\n");
+
+      // Download the file
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `startup_registrations_${timestamp}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(link.href);
+    } catch (error) {
+      console.error("Error downloading data:", error);
+      alert("Failed to download data. Please try again.");
+    }
   };
 
   const handleTeamsDownload = () => {
@@ -409,7 +440,7 @@ export default function Dashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            {activeTab === "ideathon" && (
+            {activeTab === "ideathon" ? (
               <button
                 onClick={() => setShowImportModal(true)}
                 className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-lg border border-orange-500/20 transition-colors"
@@ -428,6 +459,26 @@ export default function Dashboard() {
                   />
                 </svg>
                 Download Data
+              </button>
+            ) : (
+              <button
+                onClick={handleStartupDownload}
+                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-lg border border-orange-500/20 transition-colors"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                  />
+                </svg>
+                Download All
               </button>
             )}
             <button

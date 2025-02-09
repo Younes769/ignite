@@ -13,14 +13,14 @@ const events = [
       {
         time: "08:30",
         title: "Check-in",
-        description: "Welcome to EGNITE! Get your badges and event materials",
+        description: "Welcome to IGNITE! Get your badges and event materials",
         icon: "✍️",
         duration: 30,
       },
       {
         time: "09:00",
         title: "Opening Ceremony",
-        description: "Welcome address and kickoff of EGNITE",
+        description: "Welcome address and kickoff of IGNITE",
         icon: "🎭",
         duration: 60,
       },
@@ -637,9 +637,7 @@ const Schedule = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 schedule-content relative">
         {/* Header with artistic text */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 mb-8">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold art-text">
-            
-          </h2>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold art-text"></h2>
 
           {/* View toggle with artistic glass effect */}
           <div className="flex items-center gap-2 art-glass rounded-lg p-1.5">

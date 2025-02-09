@@ -6,11 +6,11 @@ const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
   metadataBase: new URL("https://devimpact.vercel.app"),
-  title: "EGNITE 2025 | Startup Conference & Ideathon",
+  title: "IGNITE 2025 | Startup Conference & Ideathon",
   description:
-    "Join EGNITE 2025 for an inspiring three-day journey featuring a startup showcase and ideathon challenge. Connect with innovative startups, develop groundbreaking solutions, and ignite your entrepreneurial spirit.",
+    "Join IGNITE 2025 for an inspiring three-day journey featuring a startup showcase and ideathon challenge. Connect with innovative startups, develop groundbreaking solutions, and ignite your entrepreneurial spirit.",
   keywords: [
-    "EGNITE",
+    "IGNITE",
     "Startup Conference",
     "Ideathon",
     "Innovation",
@@ -19,14 +19,14 @@ export const metadata = {
     "Startup Showcase",
     "Business Competition",
   ],
-  authors: [{ name: "EGNITE Team" }],
+  authors: [{ name: "IGNITE Team" }],
   category: "Business & Technology",
   openGraph: {
-    title: "EGNITE 2025 | Startup Conference & Ideathon",
+    title: "IGNITE 2025 | Startup Conference & Ideathon",
     description:
-      "Join EGNITE 2025 for an inspiring three-day journey featuring a startup showcase and ideathon challenge. Connect with innovative startups, develop groundbreaking solutions, and ignite your entrepreneurial spirit.",
+      "Join IGNITE 2025 for an inspiring three-day journey featuring a startup showcase and ideathon challenge. Connect with innovative startups, develop groundbreaking solutions, and ignite your entrepreneurial spirit.",
     url: "https://devimpact.vercel.app",
-    siteName: "EGNITE 2025",
+    siteName: "IGNITE 2025",
     images: [
       {
         url: "https://devimpact.vercel.app/og.png",
@@ -39,9 +39,9 @@ export const metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "EGNITE 2025 | Startup Conference & Ideathon",
+    title: "IGNITE 2025 | Startup Conference & Ideathon",
     description:
-      "Join EGNITE 2025 for an inspiring three-day journey featuring a startup showcase and ideathon challenge. Connect with innovative startups, develop groundbreaking solutions, and ignite your entrepreneurial spirit.",
+      "Join IGNITE 2025 for an inspiring three-day journey featuring a startup showcase and ideathon challenge. Connect with innovative startups, develop groundbreaking solutions, and ignite your entrepreneurial spirit.",
     images: ["https://devimpact.vercel.app/og.png"],
   },
 };

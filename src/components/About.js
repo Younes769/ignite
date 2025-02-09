@@ -42,7 +42,7 @@ const About = () => {
               }
             `}
           >
-            About <span className="art-text">EGNITE</span>
+            About <span className="art-text">IGNITE</span>
           </h2>
           <p
             className={`

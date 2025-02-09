@@ -4,9 +4,9 @@ import { useState } from "react";
 
 const faqs = [
   {
-    question: "What is EGNITE?",
+    question: "What is IGNITE?",
     answer:
-      "EGNITE is a unique three-day event combining a startup showcase and ideathon. Day 1 features an interactive startup exhibition, while Days 2-3 are dedicated to an exciting ideathon where participants develop innovative solutions. 🚀",
+      "IGNITE is a unique three-day event combining a startup showcase and ideathon. Day 1 features an interactive startup exhibition, while Days 2-3 are dedicated to an exciting ideathon where participants develop innovative solutions. 🚀",
   },
   {
     question: "How does the startup showcase work?",
@@ -21,7 +21,7 @@ const faqs = [
   {
     question: "Who can participate in the ideathon?",
     answer:
-      "Anyone with innovative ideas is welcome! Whether you're a student, professional, or enthusiast, if you're passionate about creating impactful solutions, EGNITE is for you. No technical expertise required - we value creativity and innovation! ✨",
+      "Anyone with innovative ideas is welcome! Whether you're a student, professional, or enthusiast, if you're passionate about creating impactful solutions, IGNITE is for you. No technical expertise required - we value creativity and innovation! ✨",
   },
   {
     question: "How does team formation work?",

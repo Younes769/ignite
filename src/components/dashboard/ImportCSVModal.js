@@ -224,7 +224,7 @@ export default function ImportCSVModal({
           )}
 
           <div className="space-y-4">
-            {activeTab === "ideathon" && (
+            {activeTab === "ideathon" ? (
               <>
                 <button
                   onClick={() => handleDownload("teams")}
@@ -240,26 +240,26 @@ export default function ImportCSVModal({
                 >
                   Download Individual Participants
                 </button>
+                {selectedItems?.size > 0 && (
+                  <button
+                    onClick={() => handleDownload("selected")}
+                    disabled={loading}
+                    className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    Append Selected to CSV ({selectedItems.size})
+                  </button>
+                )}
               </>
-            )}
-
-            {selectedItems?.size > 0 && (
+            ) : (
+              // Only show Download All for startup track
               <button
-                onClick={() => handleDownload("selected")}
+                onClick={() => handleDownload("all")}
                 disabled={loading}
                 className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Append Selected to CSV ({selectedItems.size})
+                Download All Participants
               </button>
             )}
-
-            <button
-              onClick={() => handleDownload("all")}
-              disabled={loading}
-              className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              Download All Participants
-            </button>
 
             <button
               onClick={onClose}

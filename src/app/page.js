@@ -23,8 +23,8 @@ export default function Home() {
         <Stats />
         <About />
         <PreviousEvents />
-        <Schedule />
         <Sponsors />
+        <Schedule />
         <FAQ />
         <Footer />
       </div>
