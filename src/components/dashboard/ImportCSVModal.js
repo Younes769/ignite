@@ -1,130 +1,203 @@
 import { useState } from "react";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 export default function ImportCSVModal({
   isOpen,
   onClose,
-  onSuccess,
   activeTab,
+  data = [],
+  selectedItems,
 }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [file, setFile] = useState(null);
-  const [importType, setImportType] = useState("participants"); // "participants" or "teams"
-  const supabase = createClientComponentClient();
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file && !file.name.endsWith(".csv")) {
-      setError("Please upload a CSV file");
-      return;
-    }
-    setFile(file);
-    setError("");
-  };
-
-  const parseCSV = (text) => {
-    const rows = text.split("\\n");
-    const headers = rows[0].split(",").map((h) => h.trim());
-
-    return rows
-      .slice(1)
-      .filter((row) => row.trim())
-      .map((row) => {
-        const values = row.split(",").map((v) => v.trim());
-        return headers.reduce((obj, header, index) => {
-          obj[header] = values[index] || "";
-          return obj;
-        }, {});
-      });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file) {
-      setError("Please select a file");
+  const downloadDirectCSV = (dataToExport, filename) => {
+    if (!dataToExport || dataToExport.length === 0) {
+      setError("No data available to download");
       return;
     }
 
-    setLoading(true);
     try {
-      const text = await file.text();
-      const records = parseCSV(text);
+      // Get headers
+      const headers = Object.keys(dataToExport[0]);
 
-      if (activeTab === "ideathon") {
-        if (importType === "participants") {
-          // Map CSV fields for ideathon participants
-          const formattedRecords = records.map((record) => ({
-            full_name: record.full_name || record.fullName || "",
-            email: record.email || "",
-            discord_tag: record.discord_tag || record.discordTag || "",
-            student_id: record.student_id || record.studentId || "",
-            university: record.university || "",
-            year_of_study: record.year_of_study || record.yearOfStudy || "",
-            major: record.major || "",
-            has_team:
-              record.has_team === "true" || record.hasTeam === "true" || false,
-            team_name: record.team_name || record.teamName || null,
-            expectations: record.expectations || "",
-          }));
+      // Create CSV content
+      const csvContent = [
+        headers.join(","),
+        ...dataToExport.map((item) =>
+          headers
+            .map((header) => {
+              const value = item[header]?.toString() || "";
+              return value.includes(",") ? `"${value}"` : value;
+            })
+            .join(",")
+        ),
+      ].join("\n");
 
-          const { error: insertError } = await supabase
-            .from("ideathon_registrations")
-            .insert(formattedRecords);
-
-          if (insertError) throw insertError;
-        } else {
-          // Import teams
-          const formattedTeams = records.map((record) => ({
-            full_name: record.member_name || record.fullName || "",
-            email: record.email || "",
-            discord_tag: record.discord_tag || record.discordTag || "",
-            student_id: record.student_id || record.studentId || "",
-            university: record.university || "",
-            year_of_study: record.year_of_study || record.yearOfStudy || "",
-            major: record.major || "",
-            has_team: true,
-            team_name: record.team_name || "",
-            expectations: record.expectations || "",
-          }));
-
-          const { error: insertError } = await supabase
-            .from("ideathon_registrations")
-            .insert(formattedTeams);
-
-          if (insertError) throw insertError;
-        }
-      } else {
-        // Map CSV fields for startup track
-        const formattedRecords = records.map((record) => ({
-          full_name: record.full_name || record.fullName || "",
-          email: record.email || "",
-          phone: record.phone || "",
-          university: record.university || "",
-          startup_name: record.startup_name || "",
-          startup_description: record.startup_description || "",
-          team_size: record.team_size || "",
-          development_stage: record.development_stage || "",
-          funding_status: record.funding_status || "",
-          pitch_deck: record.pitch_deck || "",
-        }));
-
-        const { error: insertError } = await supabase
-          .from("startup_track_registrations")
-          .insert(formattedRecords);
-
-        if (insertError) throw insertError;
-      }
-
-      onSuccess();
+      // Download
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.setAttribute("href", url);
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       onClose();
     } catch (error) {
-      console.error("Error importing CSV:", error);
-      setError(
-        "Failed to import CSV. Please check the file format and try again."
-      );
-    } finally {
-      setLoading(false);
+      console.error("Error downloading data:", error);
+      setError("Failed to download data. Please try again.");
+    }
+  };
+
+  const appendToCSV = async (dataToExport) => {
+    try {
+      // Create file input for selecting existing CSV
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".csv";
+      input.click();
+
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            // Get existing CSV content
+            const existingContent = event.target.result;
+            const existingRows = existingContent
+              .split("\n")
+              .filter((row) => row.trim());
+            const headers = existingRows[0].split(",").map((h) => h.trim());
+
+            // Format new data to match existing headers
+            const newRows = dataToExport.map((item) => {
+              return headers
+                .map((header) => {
+                  const value = item[header]?.toString() || "";
+                  return value.includes(",") ? `"${value}"` : value;
+                })
+                .join(",");
+            });
+
+            // Combine existing and new content
+            const newContent = existingRows.concat(newRows).join("\n");
+
+            // Download combined file
+            const blob = new Blob([newContent], {
+              type: "text/csv;charset=utf-8;",
+            });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute(
+              "download",
+              file.name.replace(".csv", "_updated.csv")
+            );
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            onClose();
+          } catch (error) {
+            console.error("Error processing file:", error);
+            setError("Failed to process the CSV file. Please try again.");
+          }
+        };
+        reader.readAsText(file);
+      };
+    } catch (error) {
+      console.error("Error appending to CSV:", error);
+      setError("Failed to append to CSV file. Please try again.");
+    }
+  };
+
+  const handleDownload = (type) => {
+    if (!data || data.length === 0) {
+      setError("No data available to download");
+      return;
+    }
+
+    try {
+      const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+      let dataToExport = [];
+      let filename = "";
+
+      if (type === "teams") {
+        dataToExport = data.filter((item) => item.has_team === true);
+        filename = `ideathon_teams_${timestamp}.csv`;
+        downloadDirectCSV(dataToExport, filename);
+      } else if (type === "individuals") {
+        dataToExport = data.filter((item) => !item.has_team);
+        filename = `ideathon_individuals_${timestamp}.csv`;
+        downloadDirectCSV(dataToExport, filename);
+      } else if (type === "selected") {
+        // Create file input for selecting existing CSV
+        const input = document.createElement("input");
+        input.type = "file";
+        input.accept = ".csv";
+        input.click();
+
+        input.onchange = async (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+
+          const reader = new FileReader();
+          reader.onload = (event) => {
+            try {
+              // Get existing CSV content
+              const existingContent = event.target.result;
+              const existingRows = existingContent
+                .split("\n")
+                .filter((row) => row.trim());
+              const headers = existingRows[0].split(",").map((h) => h.trim());
+
+              // Get selected data
+              dataToExport = data.filter((item) => selectedItems.has(item.id));
+
+              // Format new data to match existing headers
+              const newRows = dataToExport.map((item) => {
+                return headers
+                  .map((header) => {
+                    const value = item[header]?.toString() || "";
+                    return value.includes(",") ? `"${value}"` : value;
+                  })
+                  .join(",");
+              });
+
+              // Combine existing and new content
+              const newContent = existingRows.concat(newRows).join("\n");
+
+              // Download combined file
+              const blob = new Blob([newContent], {
+                type: "text/csv;charset=utf-8;",
+              });
+              const url = URL.createObjectURL(blob);
+              const link = document.createElement("a");
+              link.setAttribute("href", url);
+              link.setAttribute(
+                "download",
+                file.name.replace(".csv", "_updated.csv")
+              );
+              document.body.appendChild(link);
+              link.click();
+              document.body.removeChild(link);
+              onClose();
+            } catch (error) {
+              console.error("Error processing file:", error);
+              setError("Failed to process the CSV file. Please try again.");
+            }
+          };
+          reader.readAsText(file);
+        };
+      } else {
+        dataToExport = data;
+        filename = `${activeTab}_all_${timestamp}.csv`;
+        downloadDirectCSV(dataToExport, filename);
+      }
+    } catch (error) {
+      console.error("Error preparing data:", error);
+      setError("Failed to prepare data for download");
     }
   };
 
@@ -135,7 +208,7 @@ export default function ImportCSVModal({
       <div className="bg-black/80 border border-orange-500/20 rounded-xl w-full max-w-md">
         <div className="p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-white">Import CSV</h2>
+            <h2 className="text-2xl font-bold text-white">Download Data</h2>
             <button
               onClick={onClose}
               className="text-orange-200/60 hover:text-orange-200 transition-colors"
@@ -150,82 +223,52 @@ export default function ImportCSVModal({
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="space-y-4">
             {activeTab === "ideathon" && (
-              <div className="mb-4">
-                <label className="block text-orange-200/80 mb-1">
-                  Import Type
-                </label>
-                <select
-                  value={importType}
-                  onChange={(e) => setImportType(e.target.value)}
-                  className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
+              <>
+                <button
+                  onClick={() => handleDownload("teams")}
+                  disabled={loading}
+                  className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
-                  <option value="participants">Individual Participants</option>
-                  <option value="teams">Teams</option>
-                </select>
-              </div>
+                  Download Teams Data
+                </button>
+                <button
+                  onClick={() => handleDownload("individuals")}
+                  disabled={loading}
+                  className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                >
+                  Download Individual Participants
+                </button>
+              </>
             )}
 
-            <div>
-              <label className="block text-orange-200/80 mb-1">
-                Select CSV File
-              </label>
-              <input
-                type="file"
-                accept=".csv"
-                onChange={handleFileChange}
-                className="w-full bg-black/50 border border-orange-500/20 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-orange-500/40"
-              />
-              <p className="mt-2 text-sm text-gray-400">
-                {activeTab === "ideathon"
-                  ? importType === "participants"
-                    ? "CSV should include: full_name, email, discord_tag, student_id, university, year_of_study, major, has_team, team_name, expectations"
-                    : "CSV should include: team_name, member_name, email, discord_tag, student_id, university, year_of_study, major, expectations"
-                  : "CSV should include: full_name, email, phone, university, startup_name, startup_description, team_size, development_stage, funding_status, pitch_deck"}
-              </p>
-            </div>
-
-            <div className="flex justify-end space-x-4">
+            {selectedItems?.size > 0 && (
               <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 text-orange-200/60 hover:text-orange-200 transition-colors"
+                onClick={() => handleDownload("selected")}
                 disabled={loading}
+                className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Cancel
+                Append Selected to CSV ({selectedItems.size})
               </button>
-              <button
-                type="submit"
-                disabled={loading || !file}
-                className="px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                {loading ? (
-                  <>
-                    <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Importing...
-                  </>
-                ) : (
-                  "Import"
-                )}
-              </button>
-            </div>
-          </form>
+            )}
+
+            <button
+              onClick={() => handleDownload("all")}
+              disabled={loading}
+              className="w-full px-6 py-2 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              Download All Participants
+            </button>
+
+            <button
+              onClick={onClose}
+              className="w-full px-6 py-2 text-orange-200/60 hover:text-orange-200 transition-colors"
+              disabled={loading}
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       </div>
     </div>

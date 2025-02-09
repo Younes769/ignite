@@ -16,6 +16,7 @@ module.exports = {
         "spark-2": "spark-2 1s ease-out forwards",
         "spark-3": "spark-3 1s ease-out forwards",
         "spark-4": "spark-4 1s ease-out forwards",
+        "fade-in": "fade-in 0.5s ease-out forwards",
       },
       keyframes: {
         flame: {
@@ -38,6 +39,16 @@ module.exports = {
           "100%": {
             transform: "translateY(0) scale(1)",
             opacity: "0.3",
+          },
+        },
+        "fade-in": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-10px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
           },
         },
         "spark-1": {
