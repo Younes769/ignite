@@ -439,11 +439,34 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            {activeTab === "ideathon" ? (
+          {/* Header Actions */}
+          <div className="flex flex-col sm:flex-row gap-4 mb-8">
+            <div className="flex-1 flex flex-col sm:flex-row gap-4">
+              {/* Add Participant Button */}
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-amber-500 text-white rounded-lg hover:from-orange-600 hover:to-amber-600 transition-all duration-200"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+                Add Participant
+              </button>
+
+              {/* Download Button */}
               <button
                 onClick={() => setShowImportModal(true)}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-lg border border-orange-500/20 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-orange-500/10 text-orange-400 rounded-lg border border-orange-500/20 hover:bg-orange-500/20 transition-colors"
               >
                 <svg
                   className="w-5 h-5"
@@ -460,30 +483,12 @@ export default function Dashboard() {
                 </svg>
                 Download Data
               </button>
-            ) : (
-              <button
-                onClick={handleStartupDownload}
-                className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-lg border border-orange-500/20 transition-colors"
-              >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
-                  />
-                </svg>
-                Download All
-              </button>
-            )}
+            </div>
+
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-orange-500/10 hover:bg-orange-500/20 text-orange-400 rounded-lg border border-orange-500/20 transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-red-500/10 text-red-400 rounded-lg border border-red-500/20 hover:bg-red-500/20 transition-colors"
             >
               <svg
                 className="w-5 h-5"
@@ -715,6 +720,16 @@ export default function Dashboard() {
             registration={selectedRegistration}
             type={activeTab}
             onClose={() => setSelectedRegistration(null)}
+          />
+        )}
+
+        {/* Add Participant Modal */}
+        {showAddModal && (
+          <AddParticipantModal
+            isOpen={showAddModal}
+            onClose={() => setShowAddModal(false)}
+            onSuccess={handleAddSuccess}
+            activeTab={activeTab}
           />
         )}
       </div>
