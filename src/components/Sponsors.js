@@ -284,15 +284,15 @@ const Sponsors = () => {
   const [showContact, setShowContact] = useState(false);
 
   const sponsorsByTier = {
-    gold: [{ name: "Gold Sponsor 1", logo: "/logo_placeholder.png" }],
+    gold: [{ name: "✨ Coming Soon ✨", logo: "/logo_placeholder.png" }],
     silver: [
-      { name: "Silver Sponsor 1", logo: "/logo_placeholder.png" },
-      { name: "Silver Sponsor 2", logo: "/logo_placeholder.png" },
+      { name: "🌟 Opportunities Await 🌟", logo: "/logo_placeholder.png" },
+      { name: "💫 Join Our Vision 💫", logo: "/logo_placeholder.png" },
     ],
     bronze: [
-      { name: "Bronze Sponsor 1", logo: "/logo_placeholder.png" },
-      { name: "Bronze Sponsor 2", logo: "/logo_placeholder.png" },
-      { name: "Bronze Sponsor 3", logo: "/logo_placeholder.png" },
+      { name: "⭐ Be Part of IGNITE ⭐", logo: "/logo_placeholder.png" },
+      { name: "🌠 Partner With Us 🌠", logo: "/logo_placeholder.png" },
+      { name: "✨ Shape the Future ✨", logo: "/logo_placeholder.png" },
     ],
   };
 
