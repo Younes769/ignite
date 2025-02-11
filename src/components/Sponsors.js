@@ -201,7 +201,7 @@ const ContactModal = ({ onClose }) => (
             <div className="relative">
               <div className="absolute -inset-0.5 bg-gradient-to-r from-orange-500/20 to-amber-500/20 rounded-lg opacity-75 group-hover:opacity-100 transition-opacity blur" />
               <a
-                href="/sponsorship_file.pdf"
+                href="IGNITE_Sponsoring_Prop.pdf"
                 download
                 className="relative block w-full p-3 sm:p-4 bg-black/50 hover:bg-black/40 border border-orange-500/20 rounded-lg transition-colors"
               >
