@@ -44,7 +44,7 @@ const Hero = () => {
               >
                 Join Ideathon
               </button>
-              {/* Desktop tooltip */}
+              
               <div className="absolute top-1/2 -translate-y-1/2 left-full ml-4 w-64 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block">
                 <div className="bg-orange-500/10 backdrop-blur-sm p-3 rounded-lg border border-orange-500/20">
                   <p className="text-sm text-white/80">
