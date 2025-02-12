@@ -23,7 +23,7 @@ const stats = [
   {
     id: 2,
     title: "Mentors",
-    value: 0,
+    value: 10,
     suffix: "+",
     icon: (
       <path
@@ -39,8 +39,8 @@ const stats = [
   {
     id: 3,
     title: "Workshops",
-    value: 0,
-    suffix: "+",
+    value: 2,
+    suffix: "",
     icon: (
       <path
         strokeLinecap="round"

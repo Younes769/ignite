@@ -7,19 +7,39 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 const events = [
   {
-    name: "DevImpact",
-    type: "Hackathon",
+    name: "Enigma",
+    type: "Ideathon + Startups Exhibition",
     description:
-      "A 48-hour hackathon where developers turned innovative ideas into reality",
-    year: "2025",
-    stats: { participants: "50+", projects: "40+" },
+      "a startup exhibition and a ideathon challenging participants to think outside the box",
+    year: "2024",
+    stats: { participants: "60+", teams: "13+" },
     images: [
-      "/events/devimpact-1.jpg",
-      "/events/devimpact-2.jpg",
-      "/events/devimpact-3.jpg",
-      "/events/devimpact-4.jpg",
-      "/events/devimpact-5.jpg",
-      "/events/devimpact-6.jpg",
+      "/events/enigma-1.jpg", // Hero image
+      "/events/enigma-2.jpg", // Featured image
+      "/events/enigma-3.jpg", // Featured image
+      "/events/enigma-4.jpg",
+      "/events/enigma-5.jpg",
+      "/events/enigma-6.jpg",
+      "/events/enigma-7.jpg",
+      "/events/enigma-8.jpg",
+      "/events/enigma-9.jpg",
+    ],
+    videos: [
+      {
+        url: "/events/participants_and_exhibitors_feeds.mp4",
+        thumbnail: "/events/enigma-thumb1.jpg",
+        title: "participants and exhibitors feeds",
+      },
+      {
+        url: "/events/enigma-video2.mp4",
+        thumbnail: "/events/enigma-thumb2.jpg",
+        title: "Team Showcase",
+      },
+      {
+        url: "/events/exhibition.mp4",
+        thumbnail: "/events/enigma-thumb3.jpg",
+        title: "startups exhibition",
+      },
     ],
   },
   {
@@ -28,30 +48,33 @@ const events = [
     description:
       "National-level hackathon focusing on solving real-world problems",
     year: "2024",
-    stats: { participants: "70+", projects: "50+" },
+    stats: { participants: "60+", projects: "12+" },
     images: [
-      "/events/ncshack-1.jpg",
-      "/events/ncshack-2.jpg",
-      "/events/ncshack-3.jpg",
+      "/events/ncshack-1.jpg", // Hero image
+      "/events/ncshack-2.jpg", // Featured image
+      "/events/ncshack-3.jpg", // Featured image
       "/events/ncshack-4.jpg",
       "/events/ncshack-5.jpg",
       "/events/ncshack-6.jpg",
+      "/events/ncshack-7.jpg",
+      "/events/ncshack-8.jpg",
+      "/events/ncshack-9.jpg",
     ],
   },
   {
-    name: "Enigma",
-    type: "Ideathon",
+    name: "DevImpact",
+    type: "Hackathon",
     description:
-      "Innovation-focused ideathon challenging participants to think outside the box",
-    year: "2024",
-    stats: { participants: "60+", teams: "30+" },
+      "A 48-hour hackathon where developers turned innovative ideas into reality",
+    year: "2025",
+    stats: { participants: "50+", projects: "10+" },
     images: [
-      "/events/enigma-1.jpg",
-      "/events/enigma-2.jpg",
-      "/events/enigma-3.jpg",
-      "/events/enigma-4.jpg",
-      "/events/enigma-5.jpg",
-      "/events/enigma-6.jpg",
+      "/events/devimpact-1.jpg",
+      "/events/devimpact-2.jpg",
+      "/events/devimpact-3.jpg",
+      "/events/devimpact-4.jpg",
+      "/events/devimpact-5.jpg",
+      "/events/devimpact-6.jpg",
     ],
   },
   {
@@ -87,11 +110,79 @@ const events = [
   },
 ];
 
+const VideoModal = ({ video, onClose }) => {
+  if (!video) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      onClick={(e) => {
+        // Close modal when clicking the backdrop
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div className="relative w-full max-w-4xl">
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          className="absolute -top-12 right-0 text-white/60 hover:text-white transition-colors"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+
+        {/* Video player */}
+        <div className="relative w-full aspect-video bg-black rounded-lg overflow-hidden">
+          <video
+            key={video.url} // Force video reload when source changes
+            controls
+            autoPlay
+            playsInline
+            preload="auto"
+            className="absolute inset-0 w-full h-full object-contain"
+            onError={(e) => {
+              console.error("Video playback error:", e);
+              // You might want to show an error message to the user here
+            }}
+          >
+            <source
+              src={video.url}
+              type={`video/${video.url.split(".").pop().toLowerCase()}`}
+            />
+            {/* Fallback message */}
+            <p className="text-white text-center p-4">
+              Your browser doesn't support this video format. Please try a
+              different browser or download the video to watch it.
+            </p>
+          </video>
+        </div>
+
+        {/* Video title */}
+        <div className="mt-4 text-center">
+          <h3 className="text-xl font-semibold text-white">{video.title}</h3>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const PreviousEvents = () => {
   const [activeEvent, setActiveEvent] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [hoveredImage, setHoveredImage] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(null);
   const [touchStart, setTouchStart] = useState(null);
   const windowSize = useWindowSize();
 
@@ -249,31 +340,26 @@ const PreviousEvents = () => {
             ))}
           </div>
 
-          {/* Event details with touch handlers */}
+          {/* Event content */}
           <div
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center"
             onTouchStart={handleTouchStart}
             onTouchMove={handleTouchMove}
             onTouchEnd={handleTouchEnd}
           >
-            {/* Event information */}
+            {/* Event details */}
             <div className="space-y-6">
-              <div className="inline-block px-4 py-2 rounded-lg bg-orange-500/10 text-orange-400 text-sm font-medium">
-                {events[activeEvent].type}
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-2">
+                  {events[activeEvent].name}
+                </h3>
+                <p className="text-orange-400">{events[activeEvent].type}</p>
               </div>
-              <h3 className="text-3xl font-bold text-white">
-                {events[activeEvent].name}
-              </h3>
-              <p className="text-lg text-white/70">
-                {events[activeEvent].description}
-              </p>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <p className="text-white/60">{events[activeEvent].description}</p>
+              <div className="flex gap-8">
                 {Object.entries(events[activeEvent].stats).map(
                   ([key, value]) => (
-                    <div
-                      key={key}
-                      className="p-4 rounded-lg bg-white/5 backdrop-blur-sm"
-                    >
+                    <div key={key}>
                       <div className="text-2xl font-bold text-orange-400">
                         {value}
                       </div>
@@ -286,67 +372,93 @@ const PreviousEvents = () => {
               </div>
             </div>
 
-            {/* Event images - Artistic Grid */}
-            <div className="relative group">
-              <div className="grid grid-cols-3 gap-4 relative">
-                {events[activeEvent].images.map((image, index) => (
+            {/* Image gallery */}
+            <div className="grid grid-cols-6 gap-4">
+              {events[activeEvent].images.map((image, index) => (
+                <div
+                  key={index}
+                  className={`relative group overflow-hidden rounded-lg ${
+                    events[activeEvent].name === "NCSHack"
+                      ? index === 0 || index === 1
+                        ? "col-span-3 row-span-2 aspect-[16/9]" // Two large images for NCSHack
+                        : "col-span-2 aspect-square" // Rest of the images
+                      : index === 0
+                      ? "col-span-4 row-span-2 aspect-[16/9]" // First image large for other events
+                      : index === 1 || index === 2
+                      ? "col-span-2 row-span-1 aspect-square" // Second and third images medium
+                      : "col-span-2 aspect-square" // Rest of the images
+                  }`}
+                  onMouseEnter={() => setHoveredImage(index)}
+                  onMouseLeave={() => setHoveredImage(null)}
+                >
+                  <Image
+                    src={image}
+                    alt={`${events[activeEvent].name} event`}
+                    fill
+                    className="object-cover transform group-hover:scale-110 transition-transform duration-500"
+                  />
                   <div
-                    key={index}
-                    className={`
-                      relative rounded-lg overflow-hidden transform transition-all duration-500
-                      hover:scale-105 hover:z-10 hover:shadow-xl hover:shadow-orange-500/20
-                      ${index === 0 ? "col-span-2 row-span-2" : ""}
-                      ${index === 5 ? "col-span-2" : ""}
-                      ${index === 1 || index === 2 ? "hover:rotate-2" : ""}
-                      ${index === 3 || index === 4 ? "hover:-rotate-2" : ""}
-                    `}
-                    onMouseEnter={() => setHoveredImage(index)}
-                    onMouseLeave={() => setHoveredImage(null)}
-                  >
-                    <div
-                      className={`${
-                        index === 0 ? "aspect-[16/9]" : "aspect-[4/3]"
-                      }`}
-                    >
-                      <Image
-                        src={image}
-                        alt={`${events[activeEvent].name} event`}
-                        fill
-                        className={`
-                          object-cover transition-all duration-500
-                          ${hoveredImage === index ? "scale-110" : "scale-100"}
-                        `}
-                      />
-                      <div
-                        className={`
-                          absolute inset-0 transition-opacity duration-300
-                          bg-gradient-to-t from-black/50 via-black/30 to-transparent
-                          ${
-                            hoveredImage === index ? "opacity-100" : "opacity-0"
-                          }
-                        `}
-                      />
-                      <div
-                        className={`
-                          absolute inset-0 transition-opacity duration-300
-                          bg-orange-500/10
-                          ${
-                            hoveredImage === index ? "opacity-100" : "opacity-0"
-                          }
-                        `}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
-              {/* Artistic overlay */}
-              <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_0%,_rgba(249,115,22,0.1)_100%)]" />
-              </div>
+                    className={`absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent transition-opacity duration-300 ${
+                      hoveredImage === index ? "opacity-100" : "opacity-0"
+                    }`}
+                  />
+                </div>
+              ))}
             </div>
+
+            {/* Videos section - Only for Enigma */}
+            {events[activeEvent].name === "Enigma" &&
+              events[activeEvent].videos && (
+                <div className="col-span-1 md:col-span-2 mt-8">
+                  <h4 className="text-xl font-semibold text-white mb-4">
+                    Event Highlights
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {events[activeEvent].videos.map((video, index) => (
+                      <div key={index} className="relative group">
+                        <div
+                          className="relative aspect-video overflow-hidden rounded-lg cursor-pointer"
+                          onClick={() => setSelectedVideo(video)}
+                        >
+                          {/* Video thumbnail */}
+                          <Image
+                            src={video.thumbnail}
+                            alt={video.title}
+                            fill
+                            className="object-cover transform group-hover:scale-105 transition-transform duration-500"
+                          />
+                          {/* Play button overlay */}
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/60 transition-colors">
+                            <div className="w-12 h-12 rounded-full bg-orange-500/90 group-hover:bg-orange-500 flex items-center justify-center transition-colors">
+                              <svg
+                                className="w-6 h-6 text-white"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path d="M8 5v14l11-7z" />
+                              </svg>
+                            </div>
+                          </div>
+                        </div>
+                        <p className="mt-2 text-sm text-white/80 group-hover:text-orange-400 transition-colors">
+                          {video.title}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
           </div>
         </div>
       </div>
+
+      {/* Video Modal */}
+      {selectedVideo && (
+        <VideoModal
+          video={selectedVideo}
+          onClose={() => setSelectedVideo(null)}
+        />
+      )}
     </section>
   );
 };
