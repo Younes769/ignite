@@ -77,6 +77,33 @@ const About = () => {
             of Innovation
           </p>
           <p className="text-lg text-white/60 mt-2">February 20-22, 2024</p>
+          <a
+            href="https://maps.app.goo.gl/Yujxc5e3ZPqyDeQp9"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-4 text-orange-400 hover:text-orange-300 transition-colors group"
+          >
+            <span>View Location</span>
+            <svg
+              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+          </a>
         </div>
 
         {/* Three-column layout */}
