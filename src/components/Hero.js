@@ -72,7 +72,7 @@ const Hero = () => {
             <div className="relative group w-full sm:w-auto">
               <button
                 onClick={() => handleRegistrationClick("startup")}
-                className="px-8 py-4 bg-orange-500/20 text-orange-400 font-semibold rounded-lg text-lg hover:bg-orange-500/30 transition-colors w-full sm:w-auto border border-orange-500/30"
+                className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg text-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
               >
                 Startup Track
               </button>
