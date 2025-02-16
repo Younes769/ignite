@@ -54,7 +54,7 @@ const Hero = () => {
                   onClick={() => handleRegistrationClick("startup")}
                   className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg text-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
                 >
-                  Startup Track
+                  Register for Startup Track
                   <span className="block text-xs mt-1 text-white/80">
                     Day 1
                   </span>
@@ -95,7 +95,7 @@ const Hero = () => {
                   onClick={() => handleRegistrationClick("ideathon")}
                   className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg text-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
                 >
-                  Ideathon Track
+                  Register for Ideathon Track
                   <span className="block text-xs mt-1 text-white/80">
                     Day 2-3
                   </span>
