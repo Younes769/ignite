@@ -48,11 +48,19 @@ const SponsorCard = ({ name, logo, tier }) => {
           <div
             className={`absolute inset-0 bg-gradient-to-r ${style.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}
           />
-          <span
-            className={`text-sm bg-gradient-to-r ${style.gradient} bg-clip-text text-transparent font-medium`}
-          >
-            {name}
-          </span>
+          {logo ? (
+            <img
+              src={logo}
+              alt={name}
+              className="max-h-full max-w-full object-contain"
+            />
+          ) : (
+            <span
+              className={`text-sm bg-gradient-to-r ${style.gradient} bg-clip-text text-transparent font-medium`}
+            >
+              {name}
+            </span>
+          )}
         </div>
       </div>
     </div>
@@ -284,7 +292,7 @@ const Sponsors = () => {
   const [showContact, setShowContact] = useState(false);
 
   const sponsorsByTier = {
-    gold: [{ name: "✨ Coming Soon ✨", logo: "/logo_placeholder.png" }],
+    gold: [{ name: "Numidia Institute of Technology", logo: "/logo_nit_.png" }],
     silver: [
       { name: "🌟 Opportunities Await 🌟", logo: "/logo_placeholder.png" },
       { name: "💫 Join Our Vision 💫", logo: "/logo_placeholder.png" },
