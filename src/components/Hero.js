@@ -51,33 +51,83 @@ const Hero = () => {
             <div className="flex flex-col sm:flex-row gap-8 sm:gap-6 justify-center items-center">
               <div className="relative group w-full sm:w-auto">
                 <button
-                  disabled
-                  className="px-8 py-4 bg-gray-500/20 text-gray-400 font-semibold rounded-lg text-lg w-full sm:w-auto cursor-not-allowed"
+                  onClick={() => handleRegistrationClick("startup")}
+                  className="px-8 py-4 bg-orange-500 text-white font-semibold rounded-lg text-lg hover:bg-orange-600 transition-colors w-full sm:w-auto"
                 >
                   Register for Startup Track
-                  <span className="block text-xs mt-1 text-gray-500">
-                    Day 1 - Registrations Closed
+                  <span className="block text-xs mt-1 text-white/80">
+                    Day 1
                   </span>
                 </button>
+                {/* Desktop tooltip */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block">
+                  <div className="bg-orange-500/10 backdrop-blur-sm p-3 rounded-lg border border-orange-500/20">
+                    <p className="text-sm text-white/80 mb-2">
+                      Join Day 1 for the Startup Exchange - connect with leading
+                      companies and explore career opportunities
+                    </p>
+                    <div className="text-xs text-white/60 pt-2 border-t border-orange-500/20">
+                      💡 Registration is still open for Startup Track!
+                    </div>
+                  </div>
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 bg-orange-500/10 border-t border-l border-orange-500/20"></div>
+                </div>
+                {/* Mobile description */}
+                <div className="text-sm text-white/60 mt-4 block sm:hidden relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-orange-500/5 via-orange-500/10 to-orange-500/5 rounded-lg"></div>
+                  <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-lg"></div>
+                  <div className="relative p-4 border border-orange-500/20 rounded-lg">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
+                    <p className="text-white/80 mb-2">
+                      Join Day 1 for the Startup Exchange - connect with leading
+                      companies and explore career opportunities
+                    </p>
+                    <div className="text-xs text-white/60 pt-2 border-t border-orange-500/20">
+                      💡 Registration is still open for Startup Track!
+                    </div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-orange-500/20 to-transparent"></div>
+                  </div>
+                </div>
               </div>
 
               <div className="relative group w-full sm:w-auto">
                 <button
                   disabled
-                  className="px-8 py-4 bg-gray-500/20 text-gray-400 font-semibold rounded-lg text-lg w-full sm:w-auto cursor-not-allowed"
+                  className="px-8 py-4 bg-gray-500/20 text-gray-400 font-semibold rounded-lg text-lg border border-gray-500/30 cursor-not-allowed w-full sm:w-auto"
                 >
-                  Register for Ideathon Track
+                  Ideathon Registration Closed
                   <span className="block text-xs mt-1 text-gray-500">
-                    Day 2-3 - Registrations Closed
+                    Day 2-3
                   </span>
                 </button>
+                {/* Desktop tooltip */}
+                <div className="absolute top-full left-1/2 -translate-x-1/2 mt-4 w-72 opacity-0 group-hover:opacity-100 transition-opacity duration-300 hidden sm:block">
+                  <div className="bg-gray-500/10 backdrop-blur-sm p-3 rounded-lg border border-gray-500/20">
+                    <p className="text-sm text-gray-400 mb-2">
+                      Ideathon registrations are now closed. Thank you for your interest!
+                    </p>
+                    <div className="text-xs text-gray-500 pt-2 border-t border-gray-500/20">
+                      💡 You can still register for the Startup Track on Day 1!
+                    </div>
+                  </div>
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 bg-gray-500/10 border-t border-l border-gray-500/20"></div>
+                </div>
+                {/* Mobile description updated similarly */}
+                <div className="text-sm text-gray-500 mt-4 block sm:hidden relative overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-r from-gray-500/5 via-gray-500/10 to-gray-500/5 rounded-lg"></div>
+                  <div className="absolute inset-0 bg-black/20 backdrop-blur-sm rounded-lg"></div>
+                  <div className="relative p-4 border border-gray-500/20 rounded-lg">
+                    <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-gray-500/20 to-transparent"></div>
+                    <p className="text-gray-400 mb-2">
+                      Ideathon registrations are now closed. Thank you for your interest!
+                    </p>
+                    <div className="text-xs text-gray-500 pt-2 border-t border-gray-500/20">
+                      💡 You can still register for the Startup Track on Day 1!
+                    </div>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-32 h-px bg-gradient-to-r from-transparent via-gray-500/20 to-transparent"></div>
+                  </div>
+                </div>
               </div>
-            </div>
-
-            {/* Optional: Add a message about registrations being closed */}
-            <div className="text-center text-gray-400 text-sm">
-              <p>Registrations are now closed. Thank you for your interest!</p>
-              <p className="text-xs mt-1">Stay tuned for future events.</p>
             </div>
           </div>
         </div>
