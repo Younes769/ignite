@@ -293,15 +293,8 @@ const Sponsors = () => {
 
   const sponsorsByTier = {
     gold: [{ name: "Numidia Institute of Technology", logo: "/logo_nit_.png" }],
-    silver: [
-      { name: "🌟 Opportunities Await 🌟", logo: "/logo_placeholder.png" },
-      { name: "💫 Join Our Vision 💫", logo: "/logo_placeholder.png" },
-    ],
-    bronze: [
-      { name: "⭐ Be Part of IGNITE ⭐", logo: "/logo_placeholder.png" },
-      { name: "🌠 Partner With Us 🌠", logo: "/logo_placeholder.png" },
-      { name: "✨ Shape the Future ✨", logo: "/logo_placeholder.png" },
-    ],
+    silver: [],
+    bronze: []
   };
 
   return (
@@ -321,7 +314,7 @@ const Sponsors = () => {
             <span className="relative">
               <span className="absolute -inset-1 bg-orange-500/20 blur-sm rounded-lg" />
               <span className="relative bg-gradient-to-r from-orange-500 via-amber-400 to-orange-500 bg-clip-text text-transparent">
-                our sponsors
+                our sponsor
               </span>
             </span>
             <div className="h-px w-12 bg-gradient-to-r from-transparent via-orange-500/50 to-transparent" />
